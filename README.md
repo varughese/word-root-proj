@@ -1,15 +1,2 @@
-# testing-server
-A test server that uses node.js and express to create a localhost server that can be used for testing.
-
-Most modern browsers do not allow file requests on non http servers for security purposes. There, using a test server allows for development that allows you to make such requests. 
-
-All relevant app information should be placed within the `app` folder!
-
-
-### Running
-
-```
-npm install nodemon -g
-```
-
-Running nodemon will help your workflow! It automatically listens for changes, and refreshes the server as needed.
+# Word Roots
+A project that incorporates angular and $http to fetch data in a JSON file and display it in a nice format. Also, will eventually display words with more than one root and provide a better interface to add/ look up new words and or definitions for words.. 
