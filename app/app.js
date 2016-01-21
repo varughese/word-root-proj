@@ -108,4 +108,22 @@ angular.module("wordRoots", [])
         });
         $('#myModal').modal();
     };
+    
+    function jawn() {
+
+var roots = $(".terms .term .text .word .TermText").toArray()
+var qdef = $(".terms .term .text .definition .TermText").toArray()
+function Word(root, qdef) {
+this.word = root;
+this.def = qdef.substring(0, qdef.indexOf("(")-1);
+this.examples = qdef.substring(qdef.indexOf("(")+1, qdef.length-1)
+}
+var words = [];
+for(var i=0; i<roots.length; i++) {
+var root = $(roots[i]).text();
+var def = $(qdef[i]).text();
+words.push(new Word(root, def));
+}
+return words;
+}
 }]);
