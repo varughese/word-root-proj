@@ -1,0 +1,111 @@
+angular.module("wordRoots", [])
+
+.service('rootsConfigurer', function() {
+
+    function flattenArray(arr) {
+        return arr.reduce(function(a,b) {
+            return a.concat(b);
+        }, []);
+    }
+
+    function lengthSort(a, b){
+      return b.length - a.length;
+    }
+
+    function replaceRoot(str, root, replace) {
+        var x = new Array(root.length).join(replace || "-");
+        return str.replace(root.toLowerCase().trim(), x);
+    }
+
+    this.exampleList = function(data) {
+        var roots = [];
+        var examples = [];
+
+        function Word(word, root) {
+            this.finalWord = word.trim();
+            this.orgRoot = root;
+            this.word = replaceRoot(word, root, '_');
+            this.count = 0;
+            this.roots = [];
+        }
+
+        var words = [];
+
+        data.map(function(term) {
+            var rts = term.root.replace(/ /g,'').split(","),
+                exs = angular.copy(term.examples);
+
+            for(var i in exs) {
+                words.push(new Word(exs[i], rts[i]));
+                //exs[i] =  replaceRoot(exs[i], rts[i]); //exs[i].replace(rts[i].toLowerCase().trim(), new Array(rts[i].length).join("-") );
+            }
+            roots.push(rts);
+            examples.push(exs);
+        });
+
+        roots = flattenArray(roots).sort(lengthSort);
+        console.log(roots);
+        examples = flattenArray(examples);
+
+
+        for(var i=0; i<words.length; i++) {
+            var currentWord = words[i];
+            for(var r=0; r<roots.length-11; r++) {
+                var rt = roots[r];
+                if(currentWord.word.toUpperCase().indexOf(rt) > -1) {
+                    currentWord.count++;
+                    currentWord.word = replaceRoot(currentWord.word, rt);
+                    currentWord.roots.push(rt);
+                }
+            }
+            if(currentWord.count>=2) console.log(currentWord);
+        }
+    };
+
+})
+
+.service('roots', ['$http', function($http) {
+
+    this.kaplanRoots = function() {
+        return $http.get('roots.json');
+    };
+
+    this.examples = function() {
+        return $http.get('examples.json');
+    };
+
+    this.convertData = function(dom) {
+        var table = $('table', dom).last();
+        var tds = table.find('td').toArray().map(function(str) {
+            var root = $(str).find("a").text();
+            str = $(str).text();
+            return {root: root, examples: str.trim().slice(str.indexOf("Example :") + 3)};
+        });
+        console.log(JSON.stringify(tds));
+    };
+
+    this.wordRootsCom = function() {
+        return $http.get('https://myvocabulary.com/dir-root-root_master');
+    };
+}])
+
+.controller('mainController', ['$scope', 'roots', 'rootsConfigurer', function($scope, roots, rootsConfigurer) {
+    roots.kaplanRoots().success(function(data) {
+        $scope.data =  data;
+        rootsConfigurer.exampleList(data);
+    });
+
+    roots.examples().success(function(data) {
+        $scope.examples = data;
+    });
+
+    $scope.openModal = function(root) {
+        $scope.currentWordRootExample = '';
+        $scope.currentWordRoot = root;
+        $scope.examples.forEach(function(n) {
+            if(root.indexOf(n.root) > -1)
+                $scope.currentWordRootExample += n.examples.toUpperCase() + '\n';
+        });
+        $('#myModal').modal();
+    };
+}]);

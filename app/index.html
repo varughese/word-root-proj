@@ -1,0 +1,53 @@
+<html ng-app="wordRoots">
+  <head>
+    <meta charset="utf-8"/>
+    <!-- ANGULAR, BOOTSTRAP, JQUERY-->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
+    <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- MY CODE -->
+    <link rel="stylesheet" href="default.css">
+    <script src="app.js"></script>
+  </head>
+  <body ng-controller="mainController">
+      <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="myModalLabel">{{ currentWordRoot }}</h4>
+            </div>
+            <div class="modal-body">
+              <b>{{ currentWordRootExample }}</b>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <input type="search" class="form-control" ng-model="_wr.root" />
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="tile-container">
+            <div class="tile" ng-repeat="wr in data | filter:_wr" ng-click="openModal(wr.root)">
+                <h3 ng-class="{'smaller': wr.root.length > 5}">{{wr.root}}</h3>
+                <h4>{{wr.def}}</h4>
+                <p><i ng-repeat="e in wr.examples">{{e}}  </i></p>
+            </div>
+        </div>
+
+
+        <!--BOOTSTRAP WAY <div class="col-sm-2" ng-repeat="wr in data">
+            <h3>{{wr.root}}</h3>
+            <h4>{{wr.def}}</h4>
+            <p><i ng-repeat="e in wr.examples">{{e}}  </i></p>
+        </div> -->
+    </div>
+  </body>
+</html>
