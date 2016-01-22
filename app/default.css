@@ -4,25 +4,26 @@
 }
 
 .tile-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
+    margin: 0 auto;
+    width: 1480px;
 }
 
 .tile {
-    min-height: 150px;
+    height: 150px;
     padding: 20px;
-    width: 14%;
-    display: inline-block;
+    padding-top: 0;
+    width: 260px;
+    float: left;
+    display: block;
     background: firebrick;
-    margin: 10px;
+    margin: 15px;
     color: #EAEAEA;
 }
 
 .tile h3 {
-    margin-top: -30px;
     background: #5A0000;
     margin-left: -20px;
+    margin-top: 0;
     margin-right: -20px;
     padding: 10px;
     line-height: 25px;
@@ -60,7 +61,7 @@ input::-webkit-search-cancel-button {
 
 /*** INPUT FIELD **/
 input[type=search] {
-	background: #ededed url(http://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
+	background: #ededed url(img/search-icon.png) no-repeat 9px center;
 	border: solid 1px #ccc;
 	padding: 9px 10px 9px 32px;
 	width: 55px;
@@ -82,6 +83,13 @@ input::-webkit-input-placeholder {
 	color: #999;
 }
 
+@media screen and (max-width: 1500px) {
+
+    .tile-container {
+        width: 875px;
+    }
+}
+
 @media screen and (max-width: 900px) {
     .tile {
         width: 100%;
@@ -89,6 +97,6 @@ input::-webkit-input-placeholder {
     }
 
     .tile-container {
-        display: block;
+        width: inherit;
     }
 }

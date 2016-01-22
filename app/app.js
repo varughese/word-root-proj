@@ -44,7 +44,6 @@ angular.module("wordRoots", [])
         });
 
         roots = flattenArray(roots).sort(lengthSort);
-        console.log(roots);
         examples = flattenArray(examples);
 
 
@@ -62,12 +61,32 @@ angular.module("wordRoots", [])
         }
     };
 
+    this.quizletWebScraper = function(html) {
+        var roots = $(".terms .term .text .word .TermText", html).toArray();
+        var qdef = $(".terms .term .text .definition .TermText", html).toArray();
+        function Word(root, qdef) {
+            this.word = root;
+            this.def = qdef.substring(0, qdef.indexOf("(")-1);
+            this.examples = qdef.substring(qdef.indexOf("(")+1, qdef.length-1);
+        }
+        var words = [];
+        for(var i=0; i<roots.length; i++) {
+            var root = $(roots[i]).text();
+            var def = $(qdef[i]).text();
+            words.push(new Word(root, def));
+        }
+        return words;
+    };
 })
 
-.service('roots', ['$http', function($http) {
+.service('roots', ['$http', 'rootsConfigurer', function($http, rootsConfigurer) {
 
     this.kaplanRoots = function() {
         return $http.get('roots.json');
+    };
+
+    this.quizletRoots = function() {
+        return $http.get('quizlet.json');
     };
 
     this.examples = function() {
@@ -87,17 +106,36 @@ angular.module("wordRoots", [])
     this.wordRootsCom = function() {
         return $http.get('https://myvocabulary.com/dir-root-root_master');
     };
+
 }])
 
 .controller('mainController', ['$scope', 'roots', 'rootsConfigurer', function($scope, roots, rootsConfigurer) {
-    roots.kaplanRoots().success(function(data) {
-        $scope.data =  data;
-        rootsConfigurer.exampleList(data);
-    });
+    var rootConfigure = {
+        jason: function() {roots.kaplanRoots().success(function(data) {
+            $scope.data =  data;
+            rootsConfigurer.exampleList(data);
+        });},
+        rebecca: function() {roots.quizletRoots().success(function(data) {
+            var transformedData = [];
+            for(var k in data) {
+                data[k].root = k;
+                data[k].examples = data[k].examples.split(",");
+                transformedData.push(data[k]);
+            }
+            $scope.data =  transformedData;
+            rootsConfigurer.exampleList(transformedData);
+        });}
+    };
+
+    rootConfigure.jason();
+
+
 
     roots.examples().success(function(data) {
         $scope.examples = data;
     });
+
+
 
     $scope.openModal = function(root) {
         $scope.currentWordRootExample = '';
@@ -108,22 +146,4 @@ angular.module("wordRoots", [])
         });
         $('#myModal').modal();
     };
-    
-    function jawn() {
-
-var roots = $(".terms .term .text .word .TermText").toArray()
-var qdef = $(".terms .term .text .definition .TermText").toArray()
-function Word(root, qdef) {
-this.word = root;
-this.def = qdef.substring(0, qdef.indexOf("(")-1);
-this.examples = qdef.substring(qdef.indexOf("(")+1, qdef.length-1)
-}
-var words = [];
-for(var i=0; i<roots.length; i++) {
-var root = $(roots[i]).text();
-var def = $(qdef[i]).text();
-words.push(new Word(root, def));
-}
-return words;
-}
 }]);
