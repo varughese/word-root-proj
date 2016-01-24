@@ -1,15 +1,9 @@
 <html ng-app="wordRoots">
   <head>
     <meta charset="utf-8"/>
-    <!-- ANGULAR, BOOTSTRAP, JQUERY-->
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
-    <script src="./lib/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- MY CODE -->
+    <link rel="stylesheet" href="./lib/bs.css">
     <link rel="stylesheet" href="default.css">
-    <script src="app.js"></script>
   </head>
   <body ng-controller="mainController">
       <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -41,13 +35,9 @@
                 <p><i ng-repeat="e in wr.examples">{{e}}  </i></p>
             </div>
         </div>
-
-
-        <!--BOOTSTRAP WAY <div class="col-sm-2" ng-repeat="wr in data">
-            <h3>{{wr.root}}</h3>
-            <h4>{{wr.def}}</h4>
-            <p><i ng-repeat="e in wr.examples">{{e}}  </i></p>
-        </div> -->
     </div>
+    <!-- SCRIPTS -->
+    <script src="./lib/built.js"></script>
+    <script src="app.js"></script>
   </body>
 </html>
