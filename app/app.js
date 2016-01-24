@@ -1,4 +1,4 @@
-angular.module("wordRoots", [])
+angular.module("wordRoots", ['ui.router'])
 
 .service('rootsConfigurer', function() {
 
