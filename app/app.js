@@ -15,10 +15,15 @@ angular.module("wordRoots", ['ui.router'])
 }])
 
 .run(['$rootScope', 'roots', 'rootsConfigurer', function($rootScope, roots, rootsConfigurer) {
+    $rootScope.ROOT_DEFS = {};
+
     roots.kaplanRoots().success(function(data) {
         $rootScope.data =  data;
         rootsConfigurer.exampleLoader(data);
+        rootsConfigurer.loadDefintions(data);
     });
+
+
 
     roots.examples().success(function(data) {
         for(var i in data) {
@@ -29,24 +34,29 @@ angular.module("wordRoots", ['ui.router'])
     });
 }])
 
-.controller('main', ['$scope', "$state", function($scope, $state) {
+.controller('main', ['$scope', "$state", "$rootScope", function($scope, $state, $rootScope) {
     $scope.isState = function(state) {
         return state === $state.current.name;
     };
+
+    $scope.openDef = function(wr) {
+        $scope.currentWr = wr;
+        $scope.currentDefintion = $rootScope.ROOT_DEFS[wr];
+    };
 }])
 
-.service('rootsConfigurer', function() {
+.service('rootsConfigurer', ['$rootScope', function($rootScope) {
     var SELF = this;
 
     var EXAMPLES = {};
 
     var DEFINTIONS = {};
+
     this.getExamples = function() {
         var result = [];
         for(var r in EXAMPLES) {
             result.push({root: r, examples: EXAMPLES[r]});
         }
-        console.log(result);
         return result;
     };
 
@@ -181,6 +191,13 @@ angular.module("wordRoots", ['ui.router'])
         }
     };
 
+    this.loadDefintions = function(data) {
+        for(var i in data) {
+            $rootScope.ROOT_DEFS[_.clean.root(data[i].root)] = data[i].def;
+        }
+        console.log($rootScope.ROOT_DEFS);
+    };
+
     // this.exampleList = function(data) {
     //     var roots = [];
     //     var examples = [];
@@ -241,7 +258,7 @@ angular.module("wordRoots", ['ui.router'])
             words.push(new Word(root, def));
         }
     };
-})
+}])
 
 .service('roots', ['$http', 'rootsConfigurer', function($http, rootsConfigurer) {
 
@@ -271,19 +288,13 @@ angular.module("wordRoots", ['ui.router'])
         return $http.get('https://myvocabulary.com/dir-root-root_master');
     };
 
+    this.dictionary = function(word) {
+        return $http.get("http://api.wordnik.com:80/v4/word.json/" + word +"/definitions?limit=200&includeRelated=true&useCanonical=false&includeTags=false&api_key=a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5");
+    };
+
 }])
 
-.filter('with', function() {
-  return function(items, field) {
-        var result = {};
-        angular.forEach(items, function(value, key) {
-            if (!value.hasOwnProperty(field)) {
-                result[key] = value;
-            }
-        });
-        return result;
-    };
-})
+
 ;
 
 function DefintionsController($scope, roots, rootsConfigurer, $rootScope) {
@@ -293,10 +304,12 @@ function DefintionsController($scope, roots, rootsConfigurer, $rootScope) {
 
     $scope.addExample = function() {
         rootsConfigurer.addExamples($scope.currentRoot, $scope.currentExamples);
+        roots.dictionary($scope.currentExamples).success(function(data) {
+            console.log(data[0].text);
+        });
     };
 
     $scope.holygrail = rootsConfigurer.getExamples();
-
 }
 
 
@@ -310,13 +323,13 @@ function TilesController($scope, roots, rootsConfigurer, $rootScope) {
 
 
 
-    $scope.openModal = function(root) {
-        $scope.currentWordRootExample = '';
-        $scope.currentWordRoot = root;
-        $scope.examples.forEach(function(n) {
-            if(root.indexOf(n.root) > -1)
-                $scope.currentWordRootExample += n.examples.toUpperCase() + '\n';
-        });
-        $('#myModal').modal();
-    };
+    // $scope.openModal = function(root) {
+    //     $scope.currentWordRootExample = '';
+    //     $scope.currentWordRoot = root;
+    //     $scope.examples.forEach(function(n) {
+    //         if(root.indexOf(n.root) > -1)
+    //             $scope.currentWordRootExample += n.examples.toUpperCase() + '\n';
+    //     });
+    //     $('#myModal').modal();
+    // };
 }
