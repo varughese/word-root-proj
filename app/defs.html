@@ -4,13 +4,19 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-sm-12 term-verbose" ng-repeat="term in DESIRED_DEFS | reverse | filter:rootFilter">
-            <h3>{{term.word | Capitalize}}<span ng-if="term.roots.length > 2" class="glyphicon glyphicon-star"></span></h3>
-            <span class="wrt-def" ng-repeat="rt in term.roots">
-                <b>{{ rt.root }}</b> {{ rt.rootDef}}
-            </span>
-            <p class="term-def">{{ term.defintion }}</p>
-            <p class="term-sentence">{{ term.sentence }}</p>
-        </div>
+        <ol>
+            <li class="term-verbose" ng-repeat="term in DESIRED_DEFS | reverse | filter:rootFilter">
+                <h3>{{term.word | Capitalize}}<span ng-if="term.roots.length > 2" class="glyphicon glyphicon-star"></span></h3>
+                <span class="wrt-def" ng-repeat="rt in term.roots">
+                    <b>{{ rt.root }}</b> {{ rt.rootDef}}
+                </span>
+                <p class="term-def">{{ term.defintion }}</p>
+                <p class="term-sentence">{{ term.sentence }}</p>
+            </li>
+
+        </ol>
     </div>
 </div>
+
+
+<!-- You cannot copy bootstraps star, so insert this if you need to copy into google docs!★ -->

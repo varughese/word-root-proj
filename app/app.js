@@ -49,22 +49,6 @@ angular.module("wordRoots", ['ui.router'])
     $scope.openDef = function(wr) {
         $scope.currentWr = wr.replace(/ /g, '').toUpperCase();
         $scope.currentDefintion = $rootScope.ROOT_DEFS[$scope.currentWr];
-        $rootScope.db[$scope.currentWr].map(function(w) {
-
-        rootsConfigurer.addTerm(w, wr).then(function(res) {
-            $rootScope.DESIRED_DEFS.push(res);
-        });
-            // $q.all([roots.dictionary(w), roots.sentence(w)])
-            //     .then(function(data) {
-            //         var df = "", snt = "";
-            //         df = data[0].data[0] ? data[0].data[0].text : "Defintion not found!";
-            //         snt = data[1].data ? data[1].data.examples[0].text : "Sentence not found!";
-            //         $rootScope.DESIRED_DEFS.push({word: w, defintion: df, sentence: snt, rt: wr, rtDef: $scope.currentDefintion});
-            //     })
-            //     .catch(function(err) {
-            //         console.error("Error getting [" + w + "].");
-            //     });
-        });
     };
 }])
 
@@ -78,7 +62,8 @@ angular.module("wordRoots", ['ui.router'])
     var MISHAPS = {
         // Stores duplicates and non found
         repeats: [],
-        homeless: []
+        homeless: [],
+        testing: []
     };
 
     this.addTerm = function(word, rt, otherRoots) {
@@ -132,6 +117,9 @@ angular.module("wordRoots", ['ui.router'])
         return EXAMPLES;
     };
 
+    this.getMISHAPS = function() {
+        return MISHAPS;
+    };
 
     function rootParser(root) {
         var orgRoot;
@@ -184,7 +172,6 @@ angular.module("wordRoots", ['ui.router'])
 
     this.addExamples = function(root, examples, firstTime) {
         var r = (firstTime) ? root : rootParser(root);
-
         if(!r) return false;
         var current = EXAMPLES[r];
         if(current) {
@@ -338,8 +325,7 @@ angular.module("wordRoots", ['ui.router'])
             }
             var examples = data[r];
             for(var i in examples) {
-                if(examples[i].toLowerCase().indexOf(root.toLowerCase()) > -1 )
-                    words.push(new Word(examples[i], root));
+                words.push(new Word(examples[i], root));
             }
         }
 
@@ -359,9 +345,6 @@ angular.module("wordRoots", ['ui.router'])
                 }
             }
             words[w].count = words[w].roots.length;
-            if(words[w].roots.length >= 2) {
-                words[w].bonus = true;
-            }
         }
         return _.filterEr(words, "count", NUM_OF_ROOTS-1);
     };
@@ -478,17 +461,31 @@ function DefintionsController($scope, roots, rootsConfigurer, $rootScope) {
         return item.word.toLowerCase().indexOf($scope._wr.root.toLowerCase()) > -1;
     };
 
-    var filtered = rootsConfigurer.multiRootFinder($rootScope.db, 3);
-    for(var i = 0; i<filtered.length; i++) {
-        var root = filtered[i].root;
-        var word = filtered[i].word;
-        var otherRoots = filtered[i].roots;
-        rootsConfigurer.addTerm(word, root, otherRoots).then(pushToDefs);
-    }
+    var NUM_OF_ROOTS = 3;
+    var filtered = rootsConfigurer.multiRootFinder($rootScope.db, NUM_OF_ROOTS);
 
+    var defTempHolder = [];
+    var counter = 0;
     function pushToDefs(res) {
         $rootScope.DESIRED_DEFS.push(res);
+        counter++;
+        if(counter === filtered.length) {
+            $rootScope.DESIRED_DEFS.sort(function(a, b) {
+                var textA = a.word.toUpperCase();
+                var textB = b.word.toUpperCase();
+                return (textA > textB) ? -1 : (textA < textB) ? 1 : 0;
+            });
+        }
     }
+    if($rootScope.DESIRED_DEFS < 5) {
+        for(var i = 0; i<filtered.length; i++) {
+            var root = filtered[i].root;
+            var word = filtered[i].word;
+            var otherRoots = filtered[i].roots;
+            rootsConfigurer.addTerm(word, root, otherRoots).then(pushToDefs);
+        }
+    }
+
 
     $scope.addDef = function() {
         rootsConfigurer.addTerm($scope.ccurrentW, $scope.ccurrentWr, otherRoots).then(pushToDefs);
