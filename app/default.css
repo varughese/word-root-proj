@@ -107,7 +107,7 @@ nav.navbar.navbar-inverse.navbar-fixed-top {
 }
 
 .def-container {
-    widows: 1620px;
+    width: 1440px;
 }
 
 .def-container .tile {
@@ -164,8 +164,19 @@ input::-webkit-input-placeholder {
         width: 875px;
     }
 
+    .def-container {
+        width: 1080px;
+    }
 
 
+
+}
+
+@media screen and (max-width: 1120px) {
+
+    .def-container {
+        width: 924px;
+    }
 }
 
 @media screen and (max-width: 1000px) {
@@ -198,6 +209,7 @@ input::-webkit-input-placeholder {
 
 }
 
+/* widths of containers will be the (# of tiles)*(width of tile + 2 * margin of tile) */
 @media screen and (max-width: 900px) {
     .tile {
         width: 100%;
@@ -208,5 +220,13 @@ input::-webkit-input-placeholder {
         width: inherit;
         margin-left: -15px;
         margin-right: -15px;
+    }
+    .def-container {
+        width: 100%;
+        margin: 0;
+    }
+    .def-container .tile {
+        width: 25%;
+        margin: 0;
     }
 }
