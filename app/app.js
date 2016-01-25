@@ -45,7 +45,10 @@ angular.module("wordRoots", ['ui.router'])
         $rootScope.db = rootsConfigurer.getEXAMPLES();
         $rootScope.db[$scope.currentWr].map(function(w) {
             roots.dictionary(w).success(function(data) {
-                console.log(data[0].text);
+                if(!data[0]) throw "Defintion not found for [" + w + "]";
+                else console.log(data[0].text);
+            }).catch(function(err) {
+                console.error("Error getting [" + w + "].");
             });
         });
     };
