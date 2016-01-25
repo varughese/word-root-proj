@@ -1,14 +1,13 @@
 <div class="container">
     <div class="row">
-        <div class="col-sm-12 term-verbose" ng-repeat="term in DESIRED_DEFS | reverse">
+        <div class="col-sm-12 term-verbose" ng-repeat="term in DESIRED_DEFS | reverse | filter:rootFilter">
             <h3>{{term.word | Capitalize}}</h3>
             <span class="wrt-def">
                 <b>{{ term.rt }}</b>
                 {{ term.rtDef}}
             </span>
-            <p>
-                <i class="term-def">{{term.defintion}}</i>{{term.sentence }}
-            </p>
+            <p class="term-def">{{ term.defintion }}</p>
+            <p class="term-sentence">{{ term.sentence }}</p>
         </div>
     </div>
 </div>

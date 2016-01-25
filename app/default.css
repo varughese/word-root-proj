@@ -126,8 +126,12 @@ nav.navbar.navbar-inverse.navbar-fixed-top {
 
 /** FOR DEFINTIONS DEFINTIONS SCREEN **/
 .term-def {
-    display: block;
+    font-style: italic;
     font-size: 13px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+.term-sentence {
 }
 
 .term-verbose {

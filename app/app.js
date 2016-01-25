@@ -369,13 +369,9 @@ function TilesController($scope, roots, rootsConfigurer, $rootScope) {
 }
 
 function DefintionsController($scope, roots, rootsConfigurer, $rootScope) {
-    $scope.define = function(wd) {
-            roots.dictionary(w).success(function(data) {
-                if(!data[0]) throw "Defintion not found for [" + w + "]";
-                else console.log(data[0].text);
-            }).catch(function(err) {
-                console.error("Error getting [" + w + "].");
-            });
+    $scope.rootFilter = function (item) {
+        if(!$scope._wr) return true;
+        return item.rt.toLowerCase().indexOf($scope._wr.root.toLowerCase()) > -1;
     };
 
 }
