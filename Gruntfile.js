@@ -7,8 +7,8 @@ module.exports = function(grunt) {
       },
       js: {
         src: [
+          'node_modules/angular/angular.min.js',
             'node_modules/jquery/dist/jquery.min.js',
-            'node_modules/angular/angular.min.js',
             'node_modules/bootstrap/dist/js/bootstrap.min.js',
             'node_modules/ui-router/release/*.min.js'],
         dest: 'app/lib/built.js',

@@ -1,5 +1,18 @@
 angular.module("wordRoots", ['ui.router'])
 
+.config(['$stateProvider', function ($stateProvider) {
+  $stateProvider
+    .state('tiles', {
+      url: '/tiles',
+      templateUrl: './tiles.html',
+      controller: ['$scope', 'roots', 'rootsConfigurer', TilesController]
+    })
+    .state('defs', {
+      url: 'defs',
+      template: 'Defs to be implemented!'
+    });
+}])
+
 .service('rootsConfigurer', function() {
 
     function flattenArray(arr) {
@@ -109,7 +122,7 @@ angular.module("wordRoots", ['ui.router'])
 
 }])
 
-.controller('mainController', ['$scope', 'roots', 'rootsConfigurer', function($scope, roots, rootsConfigurer) {
+function TilesController($scope, roots, rootsConfigurer) {
     var rootConfigure = {
         jason: function() {roots.kaplanRoots().success(function(data) {
             $scope.data =  data;
@@ -146,4 +159,4 @@ angular.module("wordRoots", ['ui.router'])
         });
         $('#myModal').modal();
     };
-}]);
+}

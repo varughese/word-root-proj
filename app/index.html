@@ -5,7 +5,33 @@
     <link rel="stylesheet" href="./lib/bs.css">
     <link rel="stylesheet" href="default.css">
   </head>
-  <body ng-controller="mainController">
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#collapse" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
+
+        <div class="collapse navbar-collapse" id="collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li class="active"><a href="#" ui-sref="tiles">Tiles</a></li>
+            <li><a href="#" ui-sref="defs">Definitions</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-middle">
+            <li><input type="search" class="form-control" ng-model="_wr.root"></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="row">
+        <div class="col-sm-12">
+        </div>
+    </div>
     <ui-view>
     <!-- SCRIPTS -->
     <script src="./lib/built.js"></script>
