@@ -478,7 +478,7 @@ function DefintionsController($scope, roots, rootsConfigurer, $rootScope) {
         return item.word.toLowerCase().indexOf($scope._wr.root.toLowerCase()) > -1;
     };
 
-    var filtered = rootsConfigurer.multiRootFinder($rootScope.db, 2);
+    var filtered = rootsConfigurer.multiRootFinder($rootScope.db, 3);
     for(var i = 0; i<filtered.length; i++) {
         var root = filtered[i].root;
         var word = filtered[i].word;
