@@ -3,8 +3,8 @@
         <div class="col-sm-12 term-verbose" ng-repeat="term in DESIRED_DEFS | reverse | filter:rootFilter">
             <h3>{{term.word | Capitalize}}</h3>
             <span class="wrt-def">
-                <b>{{ term.rt }}</b>
-                {{ term.rtDef}}
+                <b>{{ term.root }}</b>
+                {{ term.rootDef}}
             </span>
             <p class="term-def">{{ term.defintion }}</p>
             <p class="term-sentence">{{ term.sentence }}</p>

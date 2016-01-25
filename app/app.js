@@ -50,26 +50,58 @@ angular.module("wordRoots", ['ui.router'])
         $scope.currentDefintion = $rootScope.ROOT_DEFS[$scope.currentWr];
         $rootScope.db = rootsConfigurer.getEXAMPLES();
         $rootScope.db[$scope.currentWr].map(function(w) {
-            $q.all([roots.dictionary(w), roots.sentence(w)])
-                .then(function(data) {
-                    var df = "", snt = "";
-                    df = data[0].data[0] ? data[0].data[0].text : "Defintion not found!";
-                    snt = data[1].data ? data[1].data.examples[0].text : "Sentence not found!";
-                    $rootScope.DESIRED_DEFS.push({word: w, defintion: df, sentence: snt, rt: wr, rtDef: $scope.currentDefintion});
-                })
-                .catch(function(err) {
-                    console.error("Error getting [" + w + "].");
-                });
+
+        rootsConfigurer.addTerm(w, wr).then(function(res) {
+            $rootScope.DESIRED_DEFS.push(res);
+        });
+            // $q.all([roots.dictionary(w), roots.sentence(w)])
+            //     .then(function(data) {
+            //         var df = "", snt = "";
+            //         df = data[0].data[0] ? data[0].data[0].text : "Defintion not found!";
+            //         snt = data[1].data ? data[1].data.examples[0].text : "Sentence not found!";
+            //         $rootScope.DESIRED_DEFS.push({word: w, defintion: df, sentence: snt, rt: wr, rtDef: $scope.currentDefintion});
+            //     })
+            //     .catch(function(err) {
+            //         console.error("Error getting [" + w + "].");
+            //     });
         });
     };
 }])
 
-.service('rootsConfigurer', ['$rootScope', function($rootScope) {
+.service('rootsConfigurer', ['$rootScope', 'roots', '$q', function($rootScope, roots, $q) {
     var SELF = this;
 
     var EXAMPLES = {};
 
-    var DEFINTIONS = {};
+    var TERMS = [];
+
+    var MISHAPS = {
+        // Stores duplicates and non found
+        repeats: [],
+        homeless: []
+    };
+
+    this.addTerm = function(word, rt) {
+        var q = $q.defer();
+        $q.all([roots.dictionary(word), roots.sentence(word)])
+            .then(function(data) {
+                var df = "", snt = "";
+                df = data[0].data[0] ? data[0].data[0].text : "Defintion not found!";
+                snt = data[1].data ? data[1].data.examples[0].text : "Sentence not found!";
+                var res = {};
+                res.defintion = df;
+                res.word = word;
+                res.sentence = snt;
+                res.root = rt;
+                res.rootDef = $rootScope.ROOT_DEFS[rt];
+                q.resolve(res);
+            })
+            .catch(function(err) {
+                q.reject("Error getting [" + w + "].");
+            });
+
+        return q.promise;
+    };
 
     this.getExamples = function() {
         var result = [];
@@ -83,10 +115,6 @@ angular.module("wordRoots", ['ui.router'])
         return EXAMPLES;
     };
 
-    var MISHAPS = {
-        repeats: [],
-        homeless: []
-    }; // Stores duplicates and non found
 
     function rootParser(root) {
         var orgRoot;
@@ -282,7 +310,8 @@ angular.module("wordRoots", ['ui.router'])
     };
 }])
 
-.service('roots', ['$http', 'rootsConfigurer', function($http, rootsConfigurer) {
+.service('roots', ['$http', function($http) {
+    var self = this;
 
     this.kaplanRoots = function() {
         return $http.get('roots.json');
@@ -316,6 +345,7 @@ angular.module("wordRoots", ['ui.router'])
     this.sentence = function(word) {
         return $http.get("http://api.wordnik.com:80/v4/word.json/" + word + "/examples?includeDuplicates=false&useCanonical=false&skip=0&limit=1&api_key=a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5");
     };
+
 }])
 
 
