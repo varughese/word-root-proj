@@ -163,15 +163,50 @@ input::-webkit-input-placeholder {
     .tile-container {
         width: 875px;
     }
+
+
+
+}
+
+@media screen and (max-width: 1000px) {
+
+    .navbar-nav.navbar-middle {
+        display: inline-block;
+        float: left;
+        margin-left: 15px;
+    }
+
+}
+
+
+
+/* HAMBURGER SHOWS */
+@media screen and (max-width: 768px) {
+    .navbar-nav {
+      display: block;
+      float: none;
+    }
+    .navbar-nav.navbar-right {
+       display: block;
+       float: none!important;
+    }
+    .navbar-nav.navbar-middle {
+        float: left;
+        margin-left: 15px;
+        display: none;
+    }
+
 }
 
 @media screen and (max-width: 900px) {
     .tile {
         width: 100%;
-        margin: 0 10 10 0;
+        margin: 0;
     }
 
     .tile-container {
         width: inherit;
+        margin-left: -15px;
+        margin-right: -15px;
     }
 }
