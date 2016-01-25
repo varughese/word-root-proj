@@ -148,6 +148,10 @@ nav.navbar.navbar-inverse.navbar-fixed-top {
     margin-bottom: 2px;
     border-bottom: 1px solid #F1F1F1;
 }
+.term-verbose span.glyphicon.glyphicon-star {
+    font-size: 18px;
+    margin-left: 6px;
+}
 
 
 input {
