@@ -2,7 +2,7 @@
 
 <div class="container-fluid">
    <div class="tile-container">
-       <div class="tile" ng-repeat="wr in data | filter:_wr" ng-click="openModal(wr.root)">
+       <div class="tile" ng-repeat="wr in data | filter:_wr" ng-click="openDef(wr.root)">
            <h3 ng-class="{'smaller': wr.root.length > 5}">{{wr.root}}</h3>
            <h4>{{wr.def}}</h4>
            <p><i ng-repeat="e in wr.examples">{{e}}  </i></p>

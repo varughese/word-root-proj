@@ -113,6 +113,7 @@ nav.navbar.navbar-inverse.navbar-fixed-top {
 .def-container .tile {
     height: 260px;
     width: 150px;
+    overflow: hidden;
 }
 .def-container ul {
     list-style: none;

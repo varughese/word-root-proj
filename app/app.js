@@ -34,14 +34,20 @@ angular.module("wordRoots", ['ui.router'])
     });
 }])
 
-.controller('main', ['$scope', "$state", "$rootScope", function($scope, $state, $rootScope) {
+.controller('main', ['$scope', "$state", "$rootScope", 'roots', 'rootsConfigurer', function($scope, $state, $rootScope, roots, rootsConfigurer) {
     $scope.isState = function(state) {
         return state === $state.current.name;
     };
 
     $scope.openDef = function(wr) {
-        $scope.currentWr = wr;
-        $scope.currentDefintion = $rootScope.ROOT_DEFS[wr];
+        $scope.currentWr = wr.replace(/ /g, '').toUpperCase();
+        $scope.currentDefintion = $rootScope.ROOT_DEFS[$scope.currentWr];
+        $rootScope.db = rootsConfigurer.getEXAMPLES();
+        $rootScope.db[$scope.currentWr].map(function(w) {
+            roots.dictionary(w).success(function(data) {
+                console.log(data[0].text);
+            });
+        });
     };
 }])
 
@@ -58,6 +64,10 @@ angular.module("wordRoots", ['ui.router'])
             result.push({root: r, examples: EXAMPLES[r]});
         }
         return result;
+    };
+
+    this.getEXAMPLES = function() {
+        return EXAMPLES;
     };
 
     var MISHAPS = {
@@ -94,7 +104,7 @@ angular.module("wordRoots", ['ui.router'])
             },
             function() {
                 for(var key in EXAMPLES) {
-                    if(root.indexOf(key) > -1) {
+                    if(root.indexOf(key) > -1 && key.length - root.length === 1) {
                         root = key;
                     }
                 }
@@ -304,9 +314,6 @@ function DefintionsController($scope, roots, rootsConfigurer, $rootScope) {
 
     $scope.addExample = function() {
         rootsConfigurer.addExamples($scope.currentRoot, $scope.currentExamples);
-        roots.dictionary($scope.currentExamples).success(function(data) {
-            console.log(data[0].text);
-        });
     };
 
     $scope.holygrail = rootsConfigurer.getExamples();
