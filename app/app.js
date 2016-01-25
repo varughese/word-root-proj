@@ -17,8 +17,15 @@ angular.module("wordRoots", ['ui.router'])
 .run(['$rootScope', 'roots', 'rootsConfigurer', function($rootScope, roots, rootsConfigurer) {
     roots.kaplanRoots().success(function(data) {
         $rootScope.data =  data;
-        console.log(data);
         rootsConfigurer.exampleLoader(data);
+    });
+
+    roots.examples().success(function(data) {
+        for(var i in data) {
+            var r = data[i].root;
+            var exs = data[i].examples.split(",");
+            rootsConfigurer.addExamples(r, exs);
+        }
     });
 }])
 
@@ -38,16 +45,21 @@ angular.module("wordRoots", ['ui.router'])
         return EXAMPLES;
     };
 
+    var MISHAPS = {
+        repeats: [],
+        homeless: []
+    }; // Stores duplicates and non found
+
     function rootParser(root) {
-        var comma;
+        var orgRoot;
         var fns =
         [
             function() {
-                root = _.cleanRoot(root);
+                root = _.clean.root(root);
             },
             function() {
-                console.warn("Thorough search for root [" + root + "] but may possibly cause errors! Check the aftermath of this added root!");
-                comma = root.indexOf(',');
+                orgRoot = root;
+                var comma = root.indexOf(',');
                 if(comma > -1) {
                     root = root.substring(0, comma);
                 } else {
@@ -58,7 +70,9 @@ angular.module("wordRoots", ['ui.router'])
                 for(var key in EXAMPLES) {
                     var indexOfRoot = key.indexOf(root);
                     if(indexOfRoot === -1) continue;
-                    if(indexOfRoot === comma + 1 || indexOfRoot + root.length === key.indexOf(",")) {
+
+                    indexOfRoot = key.split(",").indexOf(root);
+                    if(indexOfRoot > -1) {
                         root = key;
                     }
                 }
@@ -71,8 +85,8 @@ angular.module("wordRoots", ['ui.router'])
                 }
             },
             function() {
-                console.error("[" + root + "]" + " not found! Will be stored in the $$MISC field");
-                root = "$$MISC";
+                MISHAPS.homeless.push(orgRoot);
+                root = false;
             }
         ];
 
@@ -82,22 +96,22 @@ angular.module("wordRoots", ['ui.router'])
             o++;
         }
 
-
-
         return root;
     }
 
     this.addExamples = function(root, examples, firstTime) {
         var r = (firstTime) ? root : rootParser(root);
+
+        if(!r) return false;
         var current = EXAMPLES[r];
         if(current) {
             examples = _.perhapsArray(examples);
             for(var i in examples) {
-                var ex = examples[i];
+                var ex = _.clean.example(examples[i]);
                 if(!_.contains(current, ex)) {
                     EXAMPLES[r].push(ex);
                 } else {
-                    console.warn("The word " + ex + " is already in the root " + root + "!");
+                    MISHAPS.repeats.push(root);
                 }
             }
         } else {
@@ -107,7 +121,7 @@ angular.module("wordRoots", ['ui.router'])
 
     this.exampleLoader = function(data) {
         /*
-        * Data in EXAMPLES.wordRoots will look like this:
+        * Data in EXAMPLES will look like this:
         * ```js
         * {
         *   "A,AN": ['ANARCHY', 'AN'],
@@ -115,19 +129,18 @@ angular.module("wordRoots", ['ui.router'])
         *   "CAD,CAS,CID": ['CADENCE', 'CASCADE', 'ACCIDENT']
         * }
         * ```
-        * Passing in 'CAD' to a certain getter function will return all the CAD,CAS,CID roots. There will be a certain
-        * Regex parser that does so.
+        * Passing in 'CAD' to a certain getter function will return all the CAD,CAS,CID roots. TThe rootParser() function does so.
         *
         * The exampleLoader function will take in data, and add all of its examples to the examples array.
+        * All validation (trimming, removing spaces) should be done here, and not in the parser!
         */
         for(var i in data) {
             var rootTerm = data[i];
-            var root = _.cleanRoot(rootTerm.root);
-            var examples = rootTerm.examples;
+            var root = _.clean.root(rootTerm.root);
+            var examples = _.clean.example(rootTerm.examples.join(",")).split(",");
 
             SELF.addExamples(root, examples, true);
         }
-        console.log(EXAMPLES);
     };
 
     var _ = {
@@ -143,8 +156,13 @@ angular.module("wordRoots", ['ui.router'])
             var x = new Array(root.length).join(replace || "-");
             return str.replace(root.toLowerCase().trim(), x);
         },
-        cleanRoot: function(root) {
-            return root.replace(/ /g, '').toUpperCase();
+        clean: {
+            root: function(root) {
+                return root.replace(/ /g, '').toUpperCase();
+            },
+            example: function(ex) {
+                return ex.replace(/ /g, '').toLowerCase();
+            }
         },
         contains: function(arr, str) {
             var res = false;
@@ -203,12 +221,13 @@ angular.module("wordRoots", ['ui.router'])
     // };
 
     this.quizletWebScraper = function(html) {
-        var roots = $(".terms .term .text .word .TermText", html).toArray();
-        var qdef = $(".terms .term .text .definition .TermText", html).toArray();
+        // for use in the console on Quizlet website
+        var roots = $(".terms .term .text .word .TermText").toArray();
+        var qdef = $(".terms .term .text .definition .TermText").toArray();
         function Word(root, qdef) {
-            this.word = root;
+            this.root = root;
             this.def = qdef.substring(0, qdef.indexOf("(")-1);
-            this.examples = qdef.substring(qdef.indexOf("(")+1, qdef.length-1);
+            this.examples = qdef.substring(qdef.indexOf("(")+1, qdef.length-1).split(',');
         }
         var words = [];
         for(var i=0; i<roots.length; i++) {
@@ -216,7 +235,6 @@ angular.module("wordRoots", ['ui.router'])
             var def = $(qdef[i]).text();
             words.push(new Word(root, def));
         }
-        return words;
     };
 })
 

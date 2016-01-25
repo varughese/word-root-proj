@@ -1,4 +1,24 @@
-<input ng-model="currentRoot" /><input ng-model="currentExamples" />
-<button class="btn btn-default" ng-click="addExample()">Submit</button>
+<div class="row add-example">
+    <div class="col-md-12">
+        <div class="form-group">
+            <div class="col-md-3">
+                <label class="col-md-2">ROOT</label>
+                <div class="col-md-10">
+                    <input class="form-control" ng-model="currentRoot" />
+                </div>
+            </div>
+            <div class="col-md-8">
+                <label class="col-md-2">EXAMPLE</label>
+                <div class="col-md-10">
+                    <input class="form-control" ng-model="currentExamples" />
+                </div>
+            </div>
+            <div class="col-md-1">
+                <button class="btn btn-default" ng-click="addExample()">Submit</button>
+            </div>
+
+        </div>
+    </div>
+</div>
 
 <pre>{{ holygrail | json}}</pre>

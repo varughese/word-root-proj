@@ -98,7 +98,9 @@ nav.navbar.navbar-inverse.navbar-fixed-top {
 }
 
 
-
+.add-example {
+    margin: 10px 0;
+}
 
 input {
 	outline: none;
