@@ -23,12 +23,13 @@ angular.module("wordRoots", ['ui.router'])
     $rootScope.ROOT_DEFS = {};
     $rootScope.DESIRED_DEFS = [];
 
+    $rootScope.db = rootsConfigurer.getEXAMPLES();
+
     roots.kaplanRoots().success(function(data) {
         $rootScope.data =  data;
         rootsConfigurer.exampleLoader(data);
         rootsConfigurer.loadDefintions(data);
     });
-
 
 
     roots.examples().success(function(data) {
@@ -48,7 +49,6 @@ angular.module("wordRoots", ['ui.router'])
     $scope.openDef = function(wr) {
         $scope.currentWr = wr.replace(/ /g, '').toUpperCase();
         $scope.currentDefintion = $rootScope.ROOT_DEFS[$scope.currentWr];
-        $rootScope.db = rootsConfigurer.getEXAMPLES();
         $rootScope.db[$scope.currentWr].map(function(w) {
 
         rootsConfigurer.addTerm(w, wr).then(function(res) {
@@ -87,7 +87,7 @@ angular.module("wordRoots", ['ui.router'])
             .then(function(data) {
                 var df = "", snt = "";
                 df = data[0].data[0] ? data[0].data[0].text : "Defintion not found!";
-                snt = data[1].data ? data[1].data.examples[0].text : "Sentence not found!";
+                snt = data[1].data.examples ? data[1].data.examples[0].text : "Sentence not found!";
                 var res = {};
                 res.defintion = df;
                 res.word = word;
@@ -98,7 +98,7 @@ angular.module("wordRoots", ['ui.router'])
                 q.resolve(res);
             })
             .catch(function(err) {
-                q.reject("Error getting [" + w + "].");
+                q.reject("Error getting [" + word + "].");
             });
 
         return q.promise;
@@ -208,8 +208,6 @@ angular.module("wordRoots", ['ui.router'])
 
             SELF.addExamples(root, examples, true);
         }
-
-        SELF.multiRootFinder(EXAMPLES);
     };
 
     var _ = {
@@ -226,6 +224,10 @@ angular.module("wordRoots", ['ui.router'])
 
             if(root.indexOf("(2)") > -1)  {
                 return str;
+            }
+
+            if(!str) {
+                return 0;
             }
 
             function cryp(num) {
@@ -275,6 +277,12 @@ angular.module("wordRoots", ['ui.router'])
                     diffs++;
                 }
             }
+
+            // Prevemts word roots like A from counting if there is an A in the letter.
+            if(diffs <= 2) {
+                if(org.charAt(0) === nw.charAt(0)) diffs = 0;
+            }
+
             return diffs;
         },
         filterEr: function(arr, key, value) {
@@ -296,7 +304,7 @@ angular.module("wordRoots", ['ui.router'])
     };
 
 
-    this.multiRootFinder = function(data) {
+    this.multiRootFinder = function(data, rootNum) {
         function Word(word, root) {
             this.root = root;
             this.roots = [];
@@ -314,9 +322,13 @@ angular.module("wordRoots", ['ui.router'])
             }
             var examples = data[r];
             for(var i in examples) {
-                words.push(new Word(examples[i], root));
+                if(examples[i].toLowerCase().indexOf(root.toLowerCase()) > -1 )
+                    words.push(new Word(examples[i], root));
             }
         }
+
+        /** GLOBAL CHECKER VARIABLE **/
+        var NUM_OF_ROOTS = rootNum || 2;
 
         roots = roots.sort(_.lengthSort);
         for(var w in words) {
@@ -324,16 +336,18 @@ angular.module("wordRoots", ['ui.router'])
             for(var rt=0; rt<roots.length; rt++) {
                 var currentRoot = roots[rt],
                 replacedWord = _.replaceRoot(words[w]._word, currentRoot);
-                if(replacedWord && _.diffChecker(words[w]._word, replacedWord) > 2) {
+                if(replacedWord && _.diffChecker(words[w]._word, replacedWord) > 0) {
                     words[w]._word = replacedWord;
                     words[w].roots.push(currentRoot);
                     count++;
                 }
             }
             words[w].count = words[w].roots.length;
+            if(words[w].roots.length >= 2) {
+                words[w].bonus = true;
+            }
         }
-
-        console.log(_.filterEr(words, "count", 1));
+        return _.filterEr(words, "count", NUM_OF_ROOTS-1);
     };
     // this.exampleList = function(data) {
     //     var roots = [];
@@ -491,10 +505,18 @@ function DefintionsController($scope, roots, rootsConfigurer, $rootScope) {
         return item.word.toLowerCase().indexOf($scope._wr.root.toLowerCase()) > -1;
     };
 
+    var filtered = rootsConfigurer.multiRootFinder($rootScope.db, 2);
+    for(var i = 0; i<filtered.length; i++) {
+        var root = filtered[i].root;
+        var word = filtered[i].word;
+        rootsConfigurer.addTerm(word, root).then(pushToDefs);
+    }
+
+    function pushToDefs(res) {
+        $rootScope.DESIRED_DEFS.push(res);
+    }
 
     $scope.addDef = function() {
-        rootsConfigurer.addTerm($scope.ccurrentW, $scope.ccurrentWr).then(function(res) {
-            $rootScope.DESIRED_DEFS.push(res);
-        });
+        rootsConfigurer.addTerm($scope.ccurrentW, $scope.ccurrentWr).then(pushToDefs);
     };
 }

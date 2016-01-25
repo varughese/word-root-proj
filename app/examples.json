@@ -285,7 +285,7 @@
    },
    {
       "root":"AUD",
-      "examples":"AUDIT, AUDITION, AUDIBLE, AUDIENCE, OBEDIENT"
+      "examples":"AUDIT, AUDITION, AUDIBLE, AUDIENCE"
    },
    {
       "root":"AUDAC",
@@ -481,7 +481,7 @@
    },
    {
       "root":"CARN",
-      "examples":"CARNELIAN, REINCARNATE, CARNAGE, CARNAL, CARNATION, CARRION, CARNIVAL, CARNIVOROUS"
+      "examples":"CARNELIAN, REINCARNATE, CARNAGE, CARNAL, CARNATION, CARNIVAL, CARNIVOROUS"
    },
    {
       "root":"CART",
@@ -4085,7 +4085,7 @@
    },
    {
       "root":"TORT",
-      "examples":"EXTORT, TORTUOUS, CONTORT, TORTOISE, TORCH, TORMENT, RETORT, CONTORTIONIST"
+      "examples":"EXTORT, TORTUOUS, CONTORT, TORTOISE, TORCH, RETORT, CONTORTIONIST"
    },
    {
       "root":"TOX",
