@@ -19,7 +19,7 @@
 
         <div class="collapse navbar-collapse" id="collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li ng-if="currentWr"><a href="#" ui-sref="tiles"><b>{{currentWr}}</b> : <i>{{currentDefintion}}</i></a></li>
+            <li ng-class="{active: isState('defs')}" ng-if="currentWr"><a href="#" ui-sref="defs"><b>{{currentWr}}</b> : <i>{{currentDefintion}}</i></a></li>
             <li ng-class="{active: isState('tiles')}"><a href="#" ui-sref="tiles">Tiles</a></li>
             <li ng-class="{active: isState('exs')}"><a href="#" ui-sref="exs">Examples</a></li>
           </ul>

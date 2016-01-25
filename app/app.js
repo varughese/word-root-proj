@@ -11,11 +11,17 @@ angular.module("wordRoots", ['ui.router'])
             url: '/examples',
             templateUrl: './examples.html',
             controller: ['$scope', 'roots', 'rootsConfigurer', '$rootScope', ExamplesController]
+        })
+        .state('defs', {
+            url: '/defintions',
+            templateUrl: './defs.html',
+            controller: ['$scope', 'roots', 'rootsConfigurer', '$rootScope', DefintionsController]
         });
 }])
 
 .run(['$rootScope', 'roots', 'rootsConfigurer', function($rootScope, roots, rootsConfigurer) {
     $rootScope.ROOT_DEFS = {};
+    $rootScope.DESIRED_DEFS = [];
 
     roots.kaplanRoots().success(function(data) {
         $rootScope.data =  data;
@@ -45,8 +51,14 @@ angular.module("wordRoots", ['ui.router'])
         $rootScope.db = rootsConfigurer.getEXAMPLES();
         $rootScope.db[$scope.currentWr].map(function(w) {
             roots.dictionary(w).success(function(data) {
-                if(!data[0]) throw "Defintion not found for [" + w + "]";
-                else console.log(data[0].text);
+                var res = "";
+                if(!data[0]) {
+                    res = "Defintion not found!";
+                }
+                else {
+                    res = data[0].text;
+                    $rootScope.DESIRED_DEFS.push({word: w, defintion: res});
+                }
             }).catch(function(err) {
                 console.error("Error getting [" + w + "].");
             });
@@ -208,7 +220,6 @@ angular.module("wordRoots", ['ui.router'])
         for(var i in data) {
             $rootScope.ROOT_DEFS[_.clean.root(data[i].root)] = data[i].def;
         }
-        console.log($rootScope.ROOT_DEFS);
     };
 
     // this.exampleList = function(data) {
@@ -308,6 +319,19 @@ angular.module("wordRoots", ['ui.router'])
 }])
 
 
+.filter('Capitalize', function() {
+  return function(input, scope) {
+    if (input!==null)
+        input = input.toLowerCase();
+    return input.substring(0,1).toUpperCase()+input.substring(1);
+  };
+})
+
+.filter('reverse', function() {
+  return function(items) {
+    return items.slice().reverse();
+  };
+})
 ;
 
 function ExamplesController($scope, roots, rootsConfigurer, $rootScope) {
@@ -342,4 +366,16 @@ function TilesController($scope, roots, rootsConfigurer, $rootScope) {
     //     });
     //     $('#myModal').modal();
     // };
+}
+
+function DefintionsController($scope, roots, rootsConfigurer, $rootScope) {
+    $scope.define = function(wd) {
+            roots.dictionary(w).success(function(data) {
+                if(!data[0]) throw "Defintion not found for [" + w + "]";
+                else console.log(data[0].text);
+            }).catch(function(err) {
+                console.error("Error getting [" + w + "].");
+            });
+    };
+
 }
