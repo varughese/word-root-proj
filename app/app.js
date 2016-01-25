@@ -29,19 +29,69 @@ angular.module("wordRoots", ['ui.router'])
 }])
 
 .service('rootsConfigurer', function() {
+    var SELF = this;
+
     var EXAMPLES = {};
 
     var DEFINTIONS = {};
+    this.getExamples = function() {
+        return EXAMPLES;
+    };
 
     function rootParser(root) {
+        var comma;
+        var fns =
+        [
+            function() {
+                root = _.cleanRoot(root);
+            },
+            function() {
+                console.warn("Thorough search for root [" + root + "] but may possibly cause errors! Check the aftermath of this added root!");
+                comma = root.indexOf(',');
+                if(comma > -1) {
+                    root = root.substring(0, comma);
+                } else {
+                    comma = -1000;
+                }
+            },
+            function() {
+                for(var key in EXAMPLES) {
+                    var indexOfRoot = key.indexOf(root);
+                    if(indexOfRoot === -1) continue;
+                    if(indexOfRoot === comma + 1 || indexOfRoot + root.length === key.indexOf(",")) {
+                        root = key;
+                    }
+                }
+            },
+            function() {
+                for(var key in EXAMPLES) {
+                    if(root.indexOf(key) > -1) {
+                        root = key;
+                    }
+                }
+            },
+            function() {
+                console.error("[" + root + "]" + " not found! Will be stored in the $$MISC field");
+                root = "$$MISC";
+            }
+        ];
+
+        var o = 0;
+        while(!EXAMPLES[root] && o<fns.length) {
+            fns[o]();
+            o++;
+        }
+
+
+
         return root;
     }
 
-    function addExamples(root, examples) {
-        var r = rootParser(root);
+    this.addExamples = function(root, examples, firstTime) {
+        var r = (firstTime) ? root : rootParser(root);
         var current = EXAMPLES[r];
         if(current) {
-            examples = angular.isArray(examples) ? examples : [examples];
+            examples = _.perhapsArray(examples);
             for(var i in examples) {
                 var ex = examples[i];
                 if(!_.contains(current, ex)) {
@@ -51,9 +101,9 @@ angular.module("wordRoots", ['ui.router'])
                 }
             }
         } else {
-            EXAMPLES[r] = examples;
+            EXAMPLES[r] = _.perhapsArray(examples);
         }
-    }
+    };
 
     this.exampleLoader = function(data) {
         /*
@@ -75,7 +125,7 @@ angular.module("wordRoots", ['ui.router'])
             var root = _.cleanRoot(rootTerm.root);
             var examples = rootTerm.examples;
 
-            addExamples(root, examples);
+            SELF.addExamples(root, examples, true);
         }
         console.log(EXAMPLES);
     };
@@ -102,6 +152,9 @@ angular.module("wordRoots", ['ui.router'])
             for(var i in arr) {
                 if(arr[i].toLowerCase().indexOf(str) > -1) return true;
             }
+        },
+        perhapsArray: function(mightBeAnArr) {
+            return angular.isArray(mightBeAnArr) ? mightBeAnArr : [mightBeAnArr];
         }
     };
 
@@ -202,6 +255,12 @@ function DefintionsController($scope, roots, rootsConfigurer, $rootScope) {
     roots.examples().success(function(data) {
         $scope.examples = data;
     });
+
+    $scope.addExample = function() {
+        rootsConfigurer.addExamples($scope.currentRoot, $scope.currentExamples);
+    };
+
+    $scope.holygrail = rootsConfigurer.getExamples();
 }
 
 
