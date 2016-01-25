@@ -123,8 +123,10 @@ angular.module("wordRoots", ['ui.router'])
 }])
 
 function TilesController($scope, roots, rootsConfigurer) {
+$scope.loading=true;
     var rootConfigure = {
         jason: function() {roots.kaplanRoots().success(function(data) {
+         $scope.loading= false;
             $scope.data =  data;
             rootsConfigurer.exampleList(data);
         });},

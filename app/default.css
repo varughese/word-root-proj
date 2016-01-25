@@ -25,6 +25,19 @@ body {
   margin-top: 8px;
 }
 
+.loading {
+    width: 550px;
+    display: block;
+    margin: 20px auto;
+    text-align: center;
+    padding: 15px;
+    background: firebrick;
+}
+.loading h2 {
+  color: white;
+  margin: 0;
+}
+
 .tile-container {
     margin: 0 auto;
     width: 1480px;
