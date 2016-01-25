@@ -6,14 +6,12 @@
     <div class="row">
         <div class="col-sm-12 term-verbose" ng-repeat="term in DESIRED_DEFS | reverse | filter:rootFilter">
             <h3>{{term.word | Capitalize}}</h3>
-            <span class="wrt-def">
+            <!-- <span class="wrt-def">
                 <b>{{ term.root }}</b>
                 {{ term.rootDef}}
-            </span>
+            </span> --> {{ term.roots }}
             <p class="term-def">{{ term.defintion }}</p>
             <p class="term-sentence">{{ term.sentence }}</p>
         </div>
     </div>
 </div>
-
-{{ ultraHolyGrail}}

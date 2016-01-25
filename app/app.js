@@ -81,20 +81,36 @@ angular.module("wordRoots", ['ui.router'])
         homeless: []
     };
 
-    this.addTerm = function(word, rt) {
+    this.addTerm = function(word, rt, otherRoots) {
         var q = $q.defer();
+
+        function Root(root, rootDef) {
+            this.root = root;
+            this.rootDef = $rootScope.ROOT_DEFS[root];
+        }
+
         $q.all([roots.dictionary(word), roots.sentence(word)])
             .then(function(data) {
                 var df = "", snt = "";
                 df = data[0].data[0] ? data[0].data[0].text : "Defintion not found!";
                 snt = data[1].data.examples ? data[1].data.examples[0].text : "Sentence not found!";
-                var res = {};
-                res.defintion = df;
-                res.word = word;
-                res.sentence = snt;
-                var root = rootParser(rt);
-                res.root = root;
-                res.rootDef = $rootScope.ROOT_DEFS[root];
+                var res = {
+                    defintion: df,
+                    word: word,
+                    sentence: snt,
+                    roots: []
+                }, roots;
+                if(otherRoots) {
+                    roots = [rt].concat(otherRoots).map(function(r) {
+                        return rootParser(r);
+                    });
+                } else {
+                    roots = [rootParser(rt)];
+                }
+
+                for(var r in roots) {
+                    res.roots.push(new Root(roots[r]));
+                }
                 q.resolve(res);
             })
             .catch(function(err) {
@@ -349,49 +365,6 @@ angular.module("wordRoots", ['ui.router'])
         }
         return _.filterEr(words, "count", NUM_OF_ROOTS-1);
     };
-    // this.exampleList = function(data) {
-    //     var roots = [];
-    //     var examples = [];
-    //
-    //     function Word(word, root) {
-    //         this.finalWord = word.trim();
-    //         this.orgRoot = root;
-    //         this.word = replaceRoot(word, root, '_');
-    //         this.count = 0;
-    //         this.roots = [];
-    //     }
-    //
-    //     var words = [];
-    //
-    //     data.map(function(term) {
-    //         var rts = term.root.replace(/ /g,'').split(","),
-    //             exs = angular.copy(term.examples);
-    //
-    //         for(var i in exs) {
-    //             words.push(new Word(exs[i], rts[i]));
-    //             //exs[i] =  replaceRoot(exs[i], rts[i]); //exs[i].replace(rts[i].toLowerCase().trim(), new Array(rts[i].length).join("-") );
-    //         }
-    //         roots.push(rts);
-    //         examples.push(exs);
-    //     });
-    //
-    //     roots = flattenArray(roots).sort(lengthSort);
-    //     examples = flattenArray(examples);
-    //
-    //
-    //     for(var i=0; i<words.length; i++) {
-    //         var currentWord = words[i];
-    //         for(var r=0; r<roots.length-11; r++) {
-    //             var rt = roots[r];
-    //             if(currentWord.word.toUpperCase().indexOf(rt) > -1) {
-    //                 currentWord.count++;
-    //                 currentWord.word = replaceRoot(currentWord.word, rt);
-    //                 currentWord.roots.push(rt);
-    //             }
-    //         }
-    //         if(currentWord.count>=2) console.log(currentWord);
-    //     }
-    // };
 
     this.quizletWebScraper = function(html) {
         // for use in the console on Quizlet website
@@ -509,7 +482,8 @@ function DefintionsController($scope, roots, rootsConfigurer, $rootScope) {
     for(var i = 0; i<filtered.length; i++) {
         var root = filtered[i].root;
         var word = filtered[i].word;
-        rootsConfigurer.addTerm(word, root).then(pushToDefs);
+        var otherRoots = filtered[i].roots;
+        rootsConfigurer.addTerm(word, root, otherRoots).then(pushToDefs);
     }
 
     function pushToDefs(res) {
@@ -517,6 +491,6 @@ function DefintionsController($scope, roots, rootsConfigurer, $rootScope) {
     }
 
     $scope.addDef = function() {
-        rootsConfigurer.addTerm($scope.ccurrentW, $scope.ccurrentWr).then(pushToDefs);
+        rootsConfigurer.addTerm($scope.ccurrentW, $scope.ccurrentWr, otherRoots).then(pushToDefs);
     };
 }
