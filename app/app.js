@@ -1,16 +1,27 @@
 angular.module("wordRoots", ['ui.router'])
 
-.config(['$stateProvider', function ($stateProvider) {
-  $stateProvider
-    .state('tiles', {
-      url: '/tiles',
-      templateUrl: './tiles.html',
-      controller: ['$scope', 'roots', 'rootsConfigurer', TilesController]
-    })
-    .state('defs', {
-      url: 'defs',
-      template: 'Defs to be implemented!'
-    });
+.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
+    $urlRouterProvider.when('/', ['$state', function($state) {
+        $state.go("tiles");
+    }]);
+
+    $stateProvider
+        .state('tiles', {
+            url: '/tiles',
+            templateUrl: './tiles.html',
+            controller: ['$scope', 'roots', 'rootsConfigurer', TilesController]
+        })
+        .state('defs', {
+            url: 'defs',
+            template: 'Defs to be implemented!'
+        });
+}])
+
+.controller('main', ['$scope', "$state", function($scope, $state) {
+    $scope.isState = function(state) {
+        console.log($state.current.name);
+        return state === $state.current.name;
+    };
 }])
 
 .service('rootsConfigurer', function() {

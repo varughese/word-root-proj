@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="./lib/bs.css">
     <link rel="stylesheet" href="default.css">
   </head>
-  <body>
+  <body ng-controller="main">
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
         <div class="navbar-header">
@@ -19,8 +19,8 @@
 
         <div class="collapse navbar-collapse" id="collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li class="active"><a href="#" ui-sref="tiles">Tiles</a></li>
-            <li><a href="#" ui-sref="defs">Definitions</a></li>
+            <li ng-class="{active: isState('tiles')}"><a href="#" ui-sref="tiles">Tiles</a></li>
+            <li ng-class="{active: isState('defs')}"><a href="#" ui-sref="defs">Definitions</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-middle">
             <li><input type="search" class="form-control" ng-model="_wr.root"></li>

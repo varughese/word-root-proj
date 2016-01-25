@@ -25,6 +25,23 @@ body {
   margin-top: 8px;
 }
 
+/** COLOR OVERRIDE **/
+nav.navbar.navbar-inverse.navbar-fixed-top {
+    background-color: #4A0000;
+    border-color: #4A0000;
+}
+
+.navbar-inverse .navbar-nav>.active>a, .navbar-inverse .navbar-nav>.active>a:focus, .navbar-inverse .navbar-nav>.active>a:hover {.navbar-inverse.navbar-nav>.active>
+    a, .navbar-inverse .navbar-nav>.active>a: focus, .navbar-inverse .navbar-nav>.active>a:hover;.navbar-inverse.navbar-nav>.active>
+    a, .navbar-inverse .navbar-nav>.active>a: focus, .navbar-inverse .navbar-nav>.active>a:hover;
+    background-color: 3c0000;
+}
+
+.navbar-inverse .navbar-nav>li>a {
+    color: #EDEDED;
+}
+/**********/
+
 .loading {
     width: 550px;
     display: block;
