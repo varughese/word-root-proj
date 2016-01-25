@@ -86,6 +86,9 @@ nav.navbar.navbar-inverse.navbar-fixed-top {
 .tile h3.smaller {
     font-size: 17px;
 }
+.tile h3.smallest {
+    font-size: 9px;
+}
 
 .tile ul {
     display: inline-block;
@@ -98,8 +101,26 @@ nav.navbar.navbar-inverse.navbar-fixed-top {
 }
 
 
+/** FOR DEFINTION SECTION **/
 .add-example {
     margin: 10px 0;
+}
+
+.def-container {
+    widows: 1620px;
+}
+
+.def-container .tile {
+    height: 260px;
+    width: 150px;
+}
+.def-container ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+.def-container ul li {
+    font-size: 11px;
 }
 
 input {

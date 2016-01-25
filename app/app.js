@@ -42,7 +42,12 @@ angular.module("wordRoots", ['ui.router'])
 
     var DEFINTIONS = {};
     this.getExamples = function() {
-        return EXAMPLES;
+        var result = [];
+        for(var r in EXAMPLES) {
+            result.push({root: r, examples: EXAMPLES[r]});
+        }
+        console.log(result);
+        return result;
     };
 
     var MISHAPS = {
@@ -267,6 +272,18 @@ angular.module("wordRoots", ['ui.router'])
     };
 
 }])
+
+.filter('with', function() {
+  return function(items, field) {
+        var result = {};
+        angular.forEach(items, function(value, key) {
+            if (!value.hasOwnProperty(field)) {
+                result[key] = value;
+            }
+        });
+        return result;
+    };
+})
 ;
 
 function DefintionsController($scope, roots, rootsConfigurer, $rootScope) {
@@ -279,6 +296,7 @@ function DefintionsController($scope, roots, rootsConfigurer, $rootScope) {
     };
 
     $scope.holygrail = rootsConfigurer.getExamples();
+
 }
 
 
