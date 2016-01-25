@@ -92,8 +92,9 @@ angular.module("wordRoots", ['ui.router'])
                 res.defintion = df;
                 res.word = word;
                 res.sentence = snt;
-                res.root = rt;
-                res.rootDef = $rootScope.ROOT_DEFS[rt];
+                var root = rootParser(rt);
+                res.root = root;
+                res.rootDef = $rootScope.ROOT_DEFS[root];
                 q.resolve(res);
             })
             .catch(function(err) {
@@ -207,6 +208,8 @@ angular.module("wordRoots", ['ui.router'])
 
             SELF.addExamples(root, examples, true);
         }
+
+        SELF.multiRootFinder(EXAMPLES);
     };
 
     var _ = {
@@ -219,8 +222,31 @@ angular.module("wordRoots", ['ui.router'])
             return b.length - a.length;
         },
         replaceRoot: function(str, root, replace) {
-            var x = new Array(root.length).join(replace || "-");
-            return str.replace(root.toLowerCase().trim(), x);
+            var result = false;
+
+            if(root.indexOf("(2)") > -1)  {
+                return str;
+            }
+
+            function cryp(num) {
+                var str = "";
+                for(var i=0; i<num; i++) {
+                    str+= replace || "-";
+                }
+                return str;
+            }
+
+            var roots = root.split(',');
+            for(var r in roots) {
+                var rt = roots[r];
+                if(str.toLowerCase().indexOf(rt.toLowerCase()) > -1) {
+                    var x = cryp(rt.length);
+                    result = str.replace(rt.toLowerCase().trim(), x);
+                    break;
+                }
+            }
+
+            return result;
         },
         clean: {
             root: function(root) {
@@ -239,6 +265,27 @@ angular.module("wordRoots", ['ui.router'])
         },
         perhapsArray: function(mightBeAnArr) {
             return angular.isArray(mightBeAnArr) ? mightBeAnArr : [mightBeAnArr];
+        },
+        diffChecker: function(org, nw) {
+            var diffs = 0;
+            for(var i in org) {
+                letter = org.charAt(i);
+                nwLetter = nw.charAt(i);
+                if(letter !== nwLetter) {
+                    diffs++;
+                }
+            }
+            return diffs;
+        },
+        filterEr: function(arr, key, value) {
+            var res = [];
+            for(var i in arr) {
+                var current = arr[i];
+                if(current[key] >= value) {
+                    res.push(arr[i]);
+                }
+            }
+            return res;
         }
     };
 
@@ -248,6 +295,46 @@ angular.module("wordRoots", ['ui.router'])
         }
     };
 
+
+    this.multiRootFinder = function(data) {
+        function Word(word, root) {
+            this.root = root;
+            this.roots = [];
+            this.count = 0;
+            this.word = word;
+            this._word = _.replaceRoot(word, root, '!');
+        }
+        var words = [];
+        var roots = [];
+
+        for(var r in data) {
+            var root = r;
+            if(root.indexOf("(2)") < 0) {
+                roots.push(r);
+            }
+            var examples = data[r];
+            for(var i in examples) {
+                words.push(new Word(examples[i], root));
+            }
+        }
+
+        roots = roots.sort(_.lengthSort);
+        for(var w in words) {
+            var count = 0;
+            for(var rt=0; rt<roots.length; rt++) {
+                var currentRoot = roots[rt],
+                replacedWord = _.replaceRoot(words[w]._word, currentRoot);
+                if(replacedWord && _.diffChecker(words[w]._word, replacedWord) > 2) {
+                    words[w]._word = replacedWord;
+                    words[w].roots.push(currentRoot);
+                    count++;
+                }
+            }
+            words[w].count = words[w].roots.length;
+        }
+
+        console.log(_.filterEr(words, "count", 1));
+    };
     // this.exampleList = function(data) {
     //     var roots = [];
     //     var examples = [];
@@ -404,4 +491,10 @@ function DefintionsController($scope, roots, rootsConfigurer, $rootScope) {
         return item.word.toLowerCase().indexOf($scope._wr.root.toLowerCase()) > -1;
     };
 
+
+    $scope.addDef = function() {
+        rootsConfigurer.addTerm($scope.ccurrentW, $scope.ccurrentWr).then(function(res) {
+            $rootScope.DESIRED_DEFS.push(res);
+        });
+    };
 }

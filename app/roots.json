@@ -629,7 +629,7 @@
   },
   {
     "root":"HOMO",
-    "def":"same",
+    "def":"same !!!!!! or man",
     "examples":[
       "homonym"
     ]
@@ -1225,13 +1225,13 @@
   },
   {
     "root":"SOL",
-    "def":"alone",
+    "def":"alone !!!!!! sun",
     "examples":[
       "solitude"
     ]
   },
   {
-    "root":"SOL",
+    "root":"SOL(2)",
     "def":"sun",
     "examples":[
       "solar"
@@ -1419,7 +1419,7 @@
   },
   {
     "root":"PER",
-    "def":"against, destruction",
+    "def":"against, destruction !!!!!! through, by, for, throughout",
     "examples":[
       "perjure"
     ]
@@ -1490,7 +1490,7 @@
   },
   {
     "root":"POT",
-    "def":"drink",
+    "def":"drink !!!!!! power",
     "examples":[
       "potable"
     ]
@@ -1834,7 +1834,7 @@
     "root":"VOR",
     "def":"eat",
     "examples":[
-      "devour"
+      "voracious"
     ]
   }
 ]
