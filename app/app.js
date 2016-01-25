@@ -7,10 +7,10 @@ angular.module("wordRoots", ['ui.router'])
             templateUrl: './tiles.html',
             controller: ['$scope', 'roots', 'rootsConfigurer', '$rootScope', TilesController]
         })
-        .state('defs', {
-            url: '/defs',
-            templateUrl: './defs.html',
-            controller: ['$scope', 'roots', 'rootsConfigurer', '$rootScope', DefintionsController]
+        .state('exs', {
+            url: '/examples',
+            templateUrl: './examples.html',
+            controller: ['$scope', 'roots', 'rootsConfigurer', '$rootScope', ExamplesController]
         });
 }])
 
@@ -307,7 +307,7 @@ angular.module("wordRoots", ['ui.router'])
 
 ;
 
-function DefintionsController($scope, roots, rootsConfigurer, $rootScope) {
+function ExamplesController($scope, roots, rootsConfigurer, $rootScope) {
     roots.examples().success(function(data) {
         $scope.examples = data;
     });
