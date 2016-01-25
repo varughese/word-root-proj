@@ -40,7 +40,7 @@ angular.module("wordRoots", ['ui.router'])
     });
 }])
 
-.controller('main', ['$scope', "$state", "$rootScope", 'roots', 'rootsConfigurer', function($scope, $state, $rootScope, roots, rootsConfigurer) {
+.controller('main', ['$scope', "$state", "$rootScope", 'roots', 'rootsConfigurer', '$q', function($scope, $state, $rootScope, roots, rootsConfigurer, $q) {
     $scope.isState = function(state) {
         return state === $state.current.name;
     };
@@ -50,18 +50,16 @@ angular.module("wordRoots", ['ui.router'])
         $scope.currentDefintion = $rootScope.ROOT_DEFS[$scope.currentWr];
         $rootScope.db = rootsConfigurer.getEXAMPLES();
         $rootScope.db[$scope.currentWr].map(function(w) {
-            roots.dictionary(w).success(function(data) {
-                var res = "";
-                if(!data[0]) {
-                    res = "Defintion not found!";
-                }
-                else {
-                    res = data[0].text;
-                    $rootScope.DESIRED_DEFS.push({word: w, defintion: res});
-                }
-            }).catch(function(err) {
-                console.error("Error getting [" + w + "].");
-            });
+            $q.all([roots.dictionary(w), roots.sentence(w)])
+                .then(function(data) {
+                    var df = "", snt = "";
+                    df = data[0].data[0] ? data[0].data[0].text : "Defintion not found!";
+                    snt = data[1].data ? data[1].data.examples[0].text : "Sentence not found!";
+                    $rootScope.DESIRED_DEFS.push({word: w, defintion: df, sentence: snt, rt: wr, rtDef: $scope.currentDefintion});
+                })
+                .catch(function(err) {
+                    console.error("Error getting [" + w + "].");
+                });
         });
     };
 }])
@@ -313,9 +311,11 @@ angular.module("wordRoots", ['ui.router'])
     };
 
     this.dictionary = function(word) {
-        return $http.get("http://api.wordnik.com:80/v4/word.json/" + word +"/definitions?limit=200&includeRelated=true&useCanonical=false&includeTags=false&api_key=a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5");
+        return $http.get("http://api.wordnik.com:80/v4/word.json/" + word +"/definitions?limit=1&includeRelated=true&useCanonical=false&includeTags=false&api_key=a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5");
     };
-
+    this.sentence = function(word) {
+        return $http.get("http://api.wordnik.com:80/v4/word.json/" + word + "/examples?includeDuplicates=false&useCanonical=false&skip=0&limit=1&api_key=a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5");
+    };
 }])
 
 

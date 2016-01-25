@@ -124,6 +124,22 @@ nav.navbar.navbar-inverse.navbar-fixed-top {
     font-size: 11px;
 }
 
+/** FOR DEFINTIONS DEFINTIONS SCREEN **/
+.term-def {
+    display: block;
+    font-size: 13px;
+}
+
+.term-verbose {
+    margin-bottom: 10px;
+}
+
+.term-verbose h3 {
+    margin-bottom: 2px;
+    border-bottom: 1px solid #F1F1F1;
+}
+
+
 input {
 	outline: none;
 }
