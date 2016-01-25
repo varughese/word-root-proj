@@ -635,7 +635,7 @@
       ]
    },
    {
-      "root":"HOMO",
+      "root":"HOMO(2)",
       "def":"man",
       "examples":[
          "homicide"
@@ -1214,7 +1214,7 @@
       ]
    },
    {
-      "root":"PER",
+      "root":"PER(2)",
       "def":"through, by, for, throughout",
       "examples":[
          "perambulator"
@@ -1285,7 +1285,7 @@
       ]
    },
    {
-      "root":"POT",
+      "root":"POT(2)",
       "def":"power",
       "examples":[
          "potent"

@@ -355,14 +355,6 @@
         "def": "five",
         "examples": "quintuplets, quintessence"
     },
-    "AC,ACREX": {
-        "def": "acid, acrimony",
-        "examples": "adhere, aspire"
-    },
-    "AC,ACR": {
-        "def": "sharp, sour",
-        "examples": "to, toward"
-    },
     "ALI,ALTREX": {
         "def": "alienate, altruism",
         "examples": "another"

@@ -1,89 +1,153 @@
 angular.module("wordRoots", ['ui.router'])
 
-.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
-    $urlRouterProvider.when('/', ['$state', function($state) {
-        $state.go("tiles");
-    }]);
-
+.config(['$stateProvider', function ($stateProvider) {
     $stateProvider
         .state('tiles', {
-            url: '/tiles',
+            url: '/',
             templateUrl: './tiles.html',
-            controller: ['$scope', 'roots', 'rootsConfigurer', TilesController]
+            controller: ['$scope', 'roots', 'rootsConfigurer', '$rootScope', TilesController]
         })
         .state('defs', {
-            url: 'defs',
-            template: 'Defs to be implemented!'
+            url: '/defs',
+            templateUrl: './defs.html',
+            controller: ['$scope', 'roots', 'rootsConfigurer', '$rootScope', DefintionsController]
         });
+}])
+
+.run(['$rootScope', 'roots', 'rootsConfigurer', function($rootScope, roots, rootsConfigurer) {
+    roots.kaplanRoots().success(function(data) {
+        $rootScope.data =  data;
+        console.log(data);
+        rootsConfigurer.exampleLoader(data);
+    });
 }])
 
 .controller('main', ['$scope', "$state", function($scope, $state) {
     $scope.isState = function(state) {
-        console.log($state.current.name);
         return state === $state.current.name;
     };
 }])
 
 .service('rootsConfigurer', function() {
+    var EXAMPLES = {};
 
-    function flattenArray(arr) {
-        return arr.reduce(function(a,b) {
-            return a.concat(b);
-        }, []);
+    var DEFINTIONS = {};
+
+    function rootParser(root) {
+        return root;
     }
 
-    function lengthSort(a, b){
-      return b.length - a.length;
-    }
-
-    function replaceRoot(str, root, replace) {
-        var x = new Array(root.length).join(replace || "-");
-        return str.replace(root.toLowerCase().trim(), x);
-    }
-
-    this.exampleList = function(data) {
-        var roots = [];
-        var examples = [];
-
-        function Word(word, root) {
-            this.finalWord = word.trim();
-            this.orgRoot = root;
-            this.word = replaceRoot(word, root, '_');
-            this.count = 0;
-            this.roots = [];
-        }
-
-        var words = [];
-
-        data.map(function(term) {
-            var rts = term.root.replace(/ /g,'').split(","),
-                exs = angular.copy(term.examples);
-
-            for(var i in exs) {
-                words.push(new Word(exs[i], rts[i]));
-                //exs[i] =  replaceRoot(exs[i], rts[i]); //exs[i].replace(rts[i].toLowerCase().trim(), new Array(rts[i].length).join("-") );
-            }
-            roots.push(rts);
-            examples.push(exs);
-        });
-
-        roots = flattenArray(roots).sort(lengthSort);
-        examples = flattenArray(examples);
-
-
-        for(var i=0; i<words.length; i++) {
-            var currentWord = words[i];
-            for(var r=0; r<roots.length-11; r++) {
-                var rt = roots[r];
-                if(currentWord.word.toUpperCase().indexOf(rt) > -1) {
-                    currentWord.count++;
-                    currentWord.word = replaceRoot(currentWord.word, rt);
-                    currentWord.roots.push(rt);
+    function addExamples(root, examples) {
+        var r = rootParser(root);
+        var current = EXAMPLES[r];
+        if(current) {
+            examples = angular.isArray(examples) ? examples : [examples];
+            for(var i in examples) {
+                var ex = examples[i];
+                if(!_.contains(current, ex)) {
+                    EXAMPLES[r].push(ex);
+                } else {
+                    console.warn("The word " + ex + " is already in the root " + root + "!");
                 }
             }
-            if(currentWord.count>=2) console.log(currentWord);
+        } else {
+            EXAMPLES[r] = examples;
+        }
+    }
+
+    this.exampleLoader = function(data) {
+        /*
+        * Data in EXAMPLES.wordRoots will look like this:
+        * ```js
+        * {
+        *   "A,AN": ['ANARCHY', 'AN'],
+        *   "BELLI,BELL": ['BELLIGERENT', 'ANTEBELLUM']
+        *   "CAD,CAS,CID": ['CADENCE', 'CASCADE', 'ACCIDENT']
+        * }
+        * ```
+        * Passing in 'CAD' to a certain getter function will return all the CAD,CAS,CID roots. There will be a certain
+        * Regex parser that does so.
+        *
+        * The exampleLoader function will take in data, and add all of its examples to the examples array.
+        */
+        for(var i in data) {
+            var rootTerm = data[i];
+            var root = _.cleanRoot(rootTerm.root);
+            var examples = rootTerm.examples;
+
+            addExamples(root, examples);
+        }
+        console.log(EXAMPLES);
+    };
+
+    var _ = {
+        flattenArray: function(arr) {
+            return arr.reduce(function(a,b) {
+                return a.concat(b);
+            }, []);
+        },
+        lengthSort: function(a, b) {
+            return b.length - a.length;
+        },
+        replaceRoot: function(str, root, replace) {
+            var x = new Array(root.length).join(replace || "-");
+            return str.replace(root.toLowerCase().trim(), x);
+        },
+        cleanRoot: function(root) {
+            return root.replace(/ /g, '').toUpperCase();
+        },
+        contains: function(arr, str) {
+            var res = false;
+            str = str.trim().toLowerCase();
+            for(var i in arr) {
+                if(arr[i].toLowerCase().indexOf(str) > -1) return true;
+            }
         }
     };
+
+    // this.exampleList = function(data) {
+    //     var roots = [];
+    //     var examples = [];
+    //
+    //     function Word(word, root) {
+    //         this.finalWord = word.trim();
+    //         this.orgRoot = root;
+    //         this.word = replaceRoot(word, root, '_');
+    //         this.count = 0;
+    //         this.roots = [];
+    //     }
+    //
+    //     var words = [];
+    //
+    //     data.map(function(term) {
+    //         var rts = term.root.replace(/ /g,'').split(","),
+    //             exs = angular.copy(term.examples);
+    //
+    //         for(var i in exs) {
+    //             words.push(new Word(exs[i], rts[i]));
+    //             //exs[i] =  replaceRoot(exs[i], rts[i]); //exs[i].replace(rts[i].toLowerCase().trim(), new Array(rts[i].length).join("-") );
+    //         }
+    //         roots.push(rts);
+    //         examples.push(exs);
+    //     });
+    //
+    //     roots = flattenArray(roots).sort(lengthSort);
+    //     examples = flattenArray(examples);
+    //
+    //
+    //     for(var i=0; i<words.length; i++) {
+    //         var currentWord = words[i];
+    //         for(var r=0; r<roots.length-11; r++) {
+    //             var rt = roots[r];
+    //             if(currentWord.word.toUpperCase().indexOf(rt) > -1) {
+    //                 currentWord.count++;
+    //                 currentWord.word = replaceRoot(currentWord.word, rt);
+    //                 currentWord.roots.push(rt);
+    //             }
+    //         }
+    //         if(currentWord.count>=2) console.log(currentWord);
+    //     }
+    // };
 
     this.quizletWebScraper = function(html) {
         var roots = $(".terms .term .text .word .TermText", html).toArray();
@@ -132,29 +196,17 @@ angular.module("wordRoots", ['ui.router'])
     };
 
 }])
+;
 
-function TilesController($scope, roots, rootsConfigurer) {
-$scope.loading=true;
-    var rootConfigure = {
-        jason: function() {roots.kaplanRoots().success(function(data) {
-         $scope.loading= false;
-            $scope.data =  data;
-            rootsConfigurer.exampleList(data);
-        });},
-        rebecca: function() {roots.quizletRoots().success(function(data) {
-            var transformedData = [];
-            for(var k in data) {
-                data[k].root = k;
-                data[k].examples = data[k].examples.split(",");
-                transformedData.push(data[k]);
-            }
-            $scope.data =  transformedData;
-            rootsConfigurer.exampleList(transformedData);
-        });}
-    };
+function DefintionsController($scope, roots, rootsConfigurer, $rootScope) {
+    roots.examples().success(function(data) {
+        $scope.examples = data;
+    });
+}
 
-    rootConfigure.jason();
 
+function TilesController($scope, roots, rootsConfigurer, $rootScope) {
+    $scope.loading=!$rootScope.data;
 
 
     roots.examples().success(function(data) {

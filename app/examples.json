@@ -41,7 +41,7 @@
    },
    {
       "root":"AD",
-      "examples":"Adequate, Adhere, Adjourned, Admission, Admonish - HS, Adventurous, Adversity, Advocate"
+      "examples":"Adequate, Adhere, Adjourned, Admission, Admonish, Adventurous, Adversity, Advocate"
    },
    {
       "root":"AEDI",
@@ -281,7 +281,7 @@
    },
    {
       "root":"AUCT",
-      "examples":"AUCTION, AUCTIONEER, main root=AUG"
+      "examples":"AUCTION, AUCTIONEER, AUG"
    },
    {
       "root":"AUD",
@@ -325,7 +325,7 @@
    },
    {
       "root":"BE",
-      "examples":"Bedraggle, Behavior, Belittle - HS, Beloved, Beseech, Bestow, Betray, Bewildering"
+      "examples":"Bedraggle, Behavior, Belittle, Beloved, Beseech, Bestow, Betray, Bewildering"
    },
    {
       "root":"BEL",
@@ -761,7 +761,7 @@
    },
    {
       "root":"COM",
-      "examples":"Coherence - HS, Committee, Communication, Comparative, Compassion, Compensation, Complication, Compulsion"
+      "examples":"Coherence, Committee, Communication, Comparative, Compassion, Compensation, Complication, Compulsion"
    },
    {
       "root":"COMMUN",
@@ -3181,7 +3181,7 @@
    },
    {
       "root":"PRO",
-      "examples":"Proclaim, Prognosticate - HS, Progressive, Projection, Promotion, Proposal, Prospect, Provoke"
+      "examples":"Proclaim, Prognosticate, Progressive, Projection, Promotion, Proposal, Prospect, Provoke"
    },
    {
       "root":"PROB",
