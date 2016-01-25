@@ -4,6 +4,12 @@
 }
 body {
   padding-top: 50px;
+  overflow: hidden;
+}
+ui-view {
+    overflow-y: auto;
+    height: 100%;
+    display: block;
 }
 .navbar-collapse {
   text-align: center;

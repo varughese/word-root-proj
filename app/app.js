@@ -371,7 +371,7 @@ function TilesController($scope, roots, rootsConfigurer, $rootScope) {
 function DefintionsController($scope, roots, rootsConfigurer, $rootScope) {
     $scope.rootFilter = function (item) {
         if(!$scope._wr) return true;
-        return item.rt.toLowerCase().indexOf($scope._wr.root.toLowerCase()) > -1;
+        return item.word.toLowerCase().indexOf($scope._wr.root.toLowerCase()) > -1;
     };
 
 }
