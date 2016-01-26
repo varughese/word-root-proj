@@ -24,6 +24,10 @@
             <li ng-class="{active: isState('tiles')}"><a href="#" ui-sref="tiles">Tiles</a></li>
             <li ng-class="{active: isState('exs')}"><a href="#" ui-sref="exs">Examples</a></li>
           </ul>
+          <ul class="nav navbar-nav navbar-left">
+            <li ng-click="alphabetize()" ng-show="isState('defs')"><a><span class="glyphicon
+                         glyphicon-sort-by-alphabet"></span></a></li>
+          </ul>
           <ul class="nav navbar-nav navbar-middle">
             <li><input type="search" class="form-control" ng-model="_wr.root"></li>
           </ul>

@@ -50,6 +50,13 @@ angular.module("wordRoots", ['ui.router'])
         $scope.currentWr = wr.replace(/ /g, '').toUpperCase();
         $scope.currentDefintion = $rootScope.ROOT_DEFS[$scope.currentWr];
     };
+    $scope.alphabetize = function() {
+        $rootScope.DESIRED_DEFS.sort(function(a, b) {
+            var textA = a.word.toUpperCase();
+            var textB = b.word.toUpperCase();
+            return (textA > textB) ? -1 : (textA < textB) ? 1 : 0;
+        });
+    };
 }])
 
 .service('rootsConfigurer', ['$rootScope', 'roots', '$q', function($rootScope, roots, $q) {
@@ -137,24 +144,24 @@ angular.module("wordRoots", ['ui.router'])
                     comma = -1000;
                 }
             },
-            function() {
-                for(var key in EXAMPLES) {
-                    var indexOfRoot = key.indexOf(root);
-                    if(indexOfRoot === -1) continue;
-
-                    indexOfRoot = key.split(",").indexOf(root);
-                    if(indexOfRoot > -1) {
-                        root = key;
-                    }
-                }
-            },
-            function() {
-                for(var key in EXAMPLES) {
-                    if(root.indexOf(key) > -1 && key.length - root.length === 1) {
-                        root = key;
-                    }
-                }
-            },
+            // function() {
+            //     for(var key in EXAMPLES) {
+            //         var indexOfRoot = key.indexOf(root);
+            //         if(indexOfRoot === -1) continue;
+            //
+            //         indexOfRoot = key.split(",").indexOf(root);
+            //         if(indexOfRoot > -1) {
+            //             root = key;
+            //         }
+            //     }
+            // },
+            // function() {
+            //     for(var key in EXAMPLES) {
+            //         if(root.indexOf(key) > -1 && key.length - root.length === 1) {
+            //             root = key;
+            //         }
+            //     }
+            // },
             function() {
                 MISHAPS.homeless.push(orgRoot);
                 root = false;
@@ -478,14 +485,6 @@ function DefintionsController($scope, roots, rootsConfigurer, $rootScope) {
             rootsConfigurer.addTerm(word, root, otherRoots).then(pushToDefs);
         }
     }
-
-    $scope.alphabetize = function() {
-        $rootScope.DESIRED_DEFS.sort(function(a, b) {
-            var textA = a.word.toUpperCase();
-            var textB = b.word.toUpperCase();
-            return (textA > textB) ? -1 : (textA < textB) ? 1 : 0;
-        });
-    };
 
 
     $scope.addDef = function() {
