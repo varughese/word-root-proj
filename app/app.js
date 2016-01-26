@@ -469,13 +469,6 @@ function DefintionsController($scope, roots, rootsConfigurer, $rootScope) {
     function pushToDefs(res) {
         $rootScope.DESIRED_DEFS.push(res);
         counter++;
-        if(counter === filtered.length) {
-            $rootScope.DESIRED_DEFS.sort(function(a, b) {
-                var textA = a.word.toUpperCase();
-                var textB = b.word.toUpperCase();
-                return (textA > textB) ? -1 : (textA < textB) ? 1 : 0;
-            });
-        }
     }
     if($rootScope.DESIRED_DEFS < 5) {
         for(var i = 0; i<filtered.length; i++) {
@@ -485,6 +478,14 @@ function DefintionsController($scope, roots, rootsConfigurer, $rootScope) {
             rootsConfigurer.addTerm(word, root, otherRoots).then(pushToDefs);
         }
     }
+
+    $scope.alphabetize = function() {
+        $rootScope.DESIRED_DEFS.sort(function(a, b) {
+            var textA = a.word.toUpperCase();
+            var textB = b.word.toUpperCase();
+            return (textA > textB) ? -1 : (textA < textB) ? 1 : 0;
+        });
+    };
 
 
     $scope.addDef = function() {
