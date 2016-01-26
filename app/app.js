@@ -15,7 +15,7 @@ angular.module("wordRoots", ['ui.router'])
         .state('defs', {
             url: '/defintions',
             templateUrl: './defs.html',
-            controller: ['$scope', 'roots', 'rootsConfigurer', '$rootScope', DefintionsController]
+            controller: ['$scope', 'roots', 'rootsConfigurer', '$rootScope', 'LocalStorage', DefintionsController]
         });
 }])
 
@@ -41,7 +41,7 @@ angular.module("wordRoots", ['ui.router'])
     });
 }])
 
-.controller('main', ['$scope', "$state", "$rootScope", 'roots', 'rootsConfigurer', '$q', function($scope, $state, $rootScope, roots, rootsConfigurer, $q) {
+.controller('main', ['$scope', "$state", "$rootScope", 'roots', 'rootsConfigurer', '$q', 'LocalStorage', function($scope, $state, $rootScope, roots, rootsConfigurer, $q, LocalStorage) {
     $scope.isState = function(state) {
         return state === $state.current.name;
     };
@@ -56,6 +56,7 @@ angular.module("wordRoots", ['ui.router'])
             var textB = b.word.toUpperCase();
             return (textA > textB) ? -1 : (textA < textB) ? 1 : 0;
         });
+        LocalStorage.setObject("defs", $rootScope.DESIRED_DEFS);
     };
 }])
 
@@ -374,6 +375,17 @@ angular.module("wordRoots", ['ui.router'])
     };
 }])
 
+.service('LocalStorage', function() {
+    this.setObject = function(key, value) {
+        localStorage.setItem(key, angular.toJson(value));
+    };
+
+    this.getObject = function(key) {
+        var value = localStorage.getItem(key);
+        return value && angular.fromJson(value);
+    };
+})
+
 .service('roots', ['$http', function($http) {
     var self = this;
 
@@ -462,7 +474,7 @@ function TilesController($scope, roots, rootsConfigurer, $rootScope) {
     // };
 }
 
-function DefintionsController($scope, roots, rootsConfigurer, $rootScope) {
+function DefintionsController($scope, roots, rootsConfigurer, $rootScope, LocalStorage) {
     $scope.rootFilter = function (item) {
         if(!$scope._wr) return true;
         return item.word.toLowerCase().indexOf($scope._wr.root.toLowerCase()) > -1;
@@ -477,7 +489,9 @@ function DefintionsController($scope, roots, rootsConfigurer, $rootScope) {
         $rootScope.DESIRED_DEFS.push(res);
         counter++;
     }
-    if($rootScope.DESIRED_DEFS < 5) {
+    if(LocalStorage.getObject('defs')) {
+        $rootScope.DESIRED_DEFS = LocalStorage.getObject('defs');
+    } else {
         for(var i = 0; i<filtered.length; i++) {
             var root = filtered[i].root;
             var word = filtered[i].word;
