@@ -6,7 +6,7 @@
     <div class="row">
         <ol>
             <li class="term-verbose" ng-repeat="term in DESIRED_DEFS | reverse | filter:rootFilter">
-                <h3>{{term.word | Capitalize}}<span ng-if="term.roots.length > 2" class="glyphicon glyphicon-star"></span></h3>
+                <h3><a ng-href="http://dictionary.reference.com/browse/{{term.word}}" target="_blank">{{term.word | Capitalize}}</a><span ng-if="term.roots.length > 2" class="glyphicon glyphicon-star"></span></h3>
                 <span class="wrt-def" ng-repeat="rt in term.roots">
                     <b>{{ rt.root }}</b> {{ rt.rootDef}}
                 </span>

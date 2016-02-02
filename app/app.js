@@ -56,12 +56,12 @@ angular.module("wordRoots", ['ui.router'])
             var textB = b.word.toUpperCase();
             return (textA > textB) ? -1 : (textA < textB) ? 1 : 0;
         });
-        LocalStorage.setObject("defs", $rootScope.DESIRED_DEFS);
+        $scope.save();
     };
     $scope.save = function() {
         var backup = LocalStorage.getObject("defs");
-        LocalStorage.setObject("defs-BACKUP-" + LocalStorage.length, $rootScope.DESIRED_DEFS);
-        LocalStorage.setObject("defs", backup);
+        LocalStorage.setObject("defs-BACKUP-" + LocalStorage.length, backup);
+        LocalStorage.setObject("defs", $rootScope.DESIRED_DEFS);
     };
     $scope.fetch = function() {
         var counter = 0;
@@ -78,6 +78,9 @@ angular.module("wordRoots", ['ui.router'])
             var otherRoots = filtered[i].roots;
             rootsConfigurer.addTerm(word, root, otherRoots).then(pushToDefs);
         }
+    };
+    $scope.clear = function() {
+        LocalStorage.clear();
     };
 }])
 
@@ -404,6 +407,10 @@ angular.module("wordRoots", ['ui.router'])
     this.getObject = function(key) {
         var value = localStorage.getItem(key);
         return value && angular.fromJson(value);
+    };
+
+    this.clear = function() {
+        localStorage.clear();
     };
 
     Object.defineProperty(this, "length", {

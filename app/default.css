@@ -35,20 +35,36 @@ ui-view {
     float: left;
     height: 50px;
 }
-.navbar-nav.navbar-left a {
+.navbar-nav.navbar-left>li>a {
     padding: 0;
     margin-top: 8px;
 }
 .navbar-nav.navbar-left .glyphicon {
     font-size: 20px;
     margin-top: 6px;
-    margin-right: 15px;
     cursor: pointer;
 }
-.navbar-nav.navbar-left li:last-child .glyphicon {
+.navbar-nav.navbar-left li>a {
+    margin-right: 15px;
+}
+.navbar-nav.navbar-left li:last-child a {
     margin-right: 0;
 }
-
+.navbar-nav.navbar-left li {
+    height: 100%;
+}
+.navbar-inverse .navbar-nav>.open>a {
+    background-color: #3C0000;
+    padding-bottom: 15px;
+    margin-top: 0;
+    padding-top: 9px;
+}
+.navbar-inverse .navbar-nav>.open>a:hover {
+    background-color: #230000;
+}
+.dropdown-menu>li>a {
+    cursor: pointer;
+}
 
 
 /** COLOR OVERRIDE **/
@@ -182,6 +198,12 @@ nav.navbar.navbar-inverse.navbar-fixed-top {
     padding-right: 18px;
     padding-bottom: 30px;
     opacity: 0.1;
+}
+.term-verbose>h3>a {
+    color: black;
+}
+.term-verbose>h3>a:hover {
+    text-decoration: none;
 }
 .glyphicon-remove:hover {
     color: firebrick;
