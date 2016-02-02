@@ -58,6 +58,9 @@ angular.module("wordRoots", ['ui.router'])
         });
         LocalStorage.setObject("defs", $rootScope.DESIRED_DEFS);
     };
+    $scope.save = function() {
+        LocalStorage.setObject("defs", $rootScope.DESIRED_DEFS);
+    };
 }])
 
 .service('rootsConfigurer', ['$rootScope', 'roots', '$q', function($rootScope, roots, $q) {
@@ -503,5 +506,9 @@ function DefintionsController($scope, roots, rootsConfigurer, $rootScope, LocalS
 
     $scope.addDef = function() {
         rootsConfigurer.addTerm($scope.ccurrentW, $scope.ccurrentWr, otherRoots).then(pushToDefs);
+    };
+    $scope.remove = function(i) {
+        i = $rootScope.DESIRED_DEFS.length - 1 - i;
+        $rootScope.DESIRED_DEFS.splice(i, 1);
     };
 }

@@ -158,6 +158,7 @@ nav.navbar.navbar-inverse.navbar-fixed-top {
 
 .term-verbose {
     margin-bottom: 10px;
+    position: relative;
 }
 .term-verbose:hover h3 {
     border-bottom-color: #B9B9B9;}
@@ -169,6 +170,21 @@ nav.navbar.navbar-inverse.navbar-fixed-top {
 .term-verbose span.glyphicon.glyphicon-star {
     font-size: 18px;
     margin-left: 6px;
+}
+.term-verbose .glyphicon-remove {
+    position: absolute;
+    left: -30px;
+    top: 50%;
+    visibility: hidden;
+    padding-right: 18px;
+    padding-bottom: 30px;
+}
+.term-verbose:hover .glyphicon-remove {
+    visibility: visible;
+}
+.glyphicon-remove:hover {
+    color: firebrick;
+    cursor: pointer;
 }
 
 
