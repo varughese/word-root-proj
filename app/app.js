@@ -59,7 +59,9 @@ angular.module("wordRoots", ['ui.router'])
         LocalStorage.setObject("defs", $rootScope.DESIRED_DEFS);
     };
     $scope.save = function() {
-        LocalStorage.setObject("defs", $rootScope.DESIRED_DEFS);
+        var backup = LocalStorage.getObject("defs");
+        LocalStorage.setObject("defs-BACKUP-" + LocalStorage.length, $rootScope.DESIRED_DEFS);
+        LocalStorage.setObject("defs", backup);
     };
     $scope.fetch = function() {
         var counter = 0;
@@ -403,6 +405,13 @@ angular.module("wordRoots", ['ui.router'])
         var value = localStorage.getItem(key);
         return value && angular.fromJson(value);
     };
+
+    Object.defineProperty(this, "length", {
+        get: function() {
+            return localStorage.length;
+        }
+    });
+
 })
 
 .service('roots', ['$http', function($http) {
