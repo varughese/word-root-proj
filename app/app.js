@@ -61,6 +61,22 @@ angular.module("wordRoots", ['ui.router'])
     $scope.save = function() {
         LocalStorage.setObject("defs", $rootScope.DESIRED_DEFS);
     };
+    $scope.fetch = function() {
+        var counter = 0;
+        function pushToDefs(res) {
+            $rootScope.DESIRED_DEFS.push(res);
+            counter++;
+        }
+        $rootScope.DESIRED_DEFS = [];
+        var NUM_OF_ROOTS = 2;
+        var filtered = rootsConfigurer.multiRootFinder($rootScope.db, NUM_OF_ROOTS);
+        for(var i = 0; i<filtered.length; i++) {
+            var root = filtered[i].root;
+            var word = filtered[i].word;
+            var otherRoots = filtered[i].roots;
+            rootsConfigurer.addTerm(word, root, otherRoots).then(pushToDefs);
+        }
+    };
 }])
 
 .service('rootsConfigurer', ['$rootScope', 'roots', '$q', function($rootScope, roots, $q) {
@@ -483,26 +499,12 @@ function DefintionsController($scope, roots, rootsConfigurer, $rootScope, LocalS
         return item.word.toLowerCase().indexOf($scope._wr.root.toLowerCase()) > -1;
     };
 
-    var NUM_OF_ROOTS = 3;
-    var filtered = rootsConfigurer.multiRootFinder($rootScope.db, NUM_OF_ROOTS);
 
-    var defTempHolder = [];
-    var counter = 0;
-    function pushToDefs(res) {
-        $rootScope.DESIRED_DEFS.push(res);
-        counter++;
-    }
     if(LocalStorage.getObject('defs')) {
         $rootScope.DESIRED_DEFS = LocalStorage.getObject('defs');
     } else {
-        for(var i = 0; i<filtered.length; i++) {
-            var root = filtered[i].root;
-            var word = filtered[i].word;
-            var otherRoots = filtered[i].roots;
-            rootsConfigurer.addTerm(word, root, otherRoots).then(pushToDefs);
-        }
+        $scope.fetch();
     }
-
 
     $scope.addDef = function() {
         rootsConfigurer.addTerm($scope.ccurrentW, $scope.ccurrentWr, otherRoots).then(pushToDefs);
