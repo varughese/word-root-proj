@@ -473,6 +473,7 @@ angular.module("wordRoots", ['ui.router'])
     return items.slice().reverse();
   };
 })
+
 ;
 
 function ExamplesController($scope, roots, rootsConfigurer, $rootScope) {
@@ -515,6 +516,9 @@ function DefintionsController($scope, roots, rootsConfigurer, $rootScope, LocalS
         return item.word.toLowerCase().indexOf($scope._wr.root.toLowerCase()) > -1;
     };
 
+    $scope.bonus = function(item) {
+        return $scope.filterOnBonus ? item.roots.length > 2 : true;
+    };
 
     if(LocalStorage.getObject('defs')) {
         $rootScope.DESIRED_DEFS = LocalStorage.getObject('defs');
@@ -525,8 +529,8 @@ function DefintionsController($scope, roots, rootsConfigurer, $rootScope, LocalS
     $scope.addDef = function() {
         rootsConfigurer.addTerm($scope.ccurrentW, $scope.ccurrentWr, otherRoots).then(pushToDefs);
     };
-    $scope.remove = function(i) {
-        i = $rootScope.DESIRED_DEFS.length - 1 - i;
+    $scope.remove = function(word) {
+        var i = $rootScope.DESIRED_DEFS.map(function(x) {return x.word; }).indexOf(word);
         $rootScope.DESIRED_DEFS.splice(i, 1);
     };
 }

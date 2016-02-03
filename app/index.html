@@ -29,6 +29,7 @@
               <a data-toggle="dropdown" role="button"><span class="glyphicon glyphicon-cog"></span></a>
               <ul class="dropdown-menu">
                   <li ng-click="clear()"><a>Clear Storage</a></li>
+                  <li><span><input type="checkbox" ng-model="filterOnBonus">Filter on Bonus</span></li>
               </ul>
             </li>
             <li ng-click="alphabetize()" ng-show="isState('defs')"><a><span class="glyphicon glyphicon-sort-by-alphabet"></span></a></li>
