@@ -1,6 +1,9 @@
 angular.module("wordRoots", ['ui.router'])
 
-.config(['$stateProvider', function ($stateProvider) {
+.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
+    $urlRouterProvider
+        .otherwise('/');
+
     $stateProvider
         .state('tiles', {
             url: '/',
@@ -169,24 +172,24 @@ angular.module("wordRoots", ['ui.router'])
                     comma = -1000;
                 }
             },
-            // function() {
-            //     for(var key in EXAMPLES) {
-            //         var indexOfRoot = key.indexOf(root);
-            //         if(indexOfRoot === -1) continue;
-            //
-            //         indexOfRoot = key.split(",").indexOf(root);
-            //         if(indexOfRoot > -1) {
-            //             root = key;
-            //         }
-            //     }
-            // },
-            // function() {
-            //     for(var key in EXAMPLES) {
-            //         if(root.indexOf(key) > -1 && key.length - root.length === 1) {
-            //             root = key;
-            //         }
-            //     }
-            // },
+            function() {
+                for(var key in EXAMPLES) {
+                    var indexOfRoot = key.indexOf(root);
+                    if(indexOfRoot === -1) continue;
+
+                    indexOfRoot = key.split(",").indexOf(root);
+                    if(indexOfRoot > -1) {
+                        root = key;
+                    }
+                }
+            },
+            function() {
+                for(var key in EXAMPLES) {
+                    if(root.indexOf(key) > -1 && key.length - root.length === 1) {
+                        root = key;
+                    }
+                }
+            },
             function() {
                 MISHAPS.homeless.push(orgRoot);
                 root = false;
