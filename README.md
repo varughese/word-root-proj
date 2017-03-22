@@ -1,7 +1,8 @@
 # Word Roots
-A project that incorporates angular and $http to fetch data in a JSON file and display it in a nice format. Also, will eventually display words with more than one root and provide a better interface to add/ look up new words and or definitions for words..
+A project that incorporates angular and $http to fetch data in a JSON file and display it in a nice format. Great simple project to test Angular and CSS skills.
 
-# TODO
-[] Rename `_wr.root` (ng-model for search bar) to be search
-[] Add toggle to toggle search bar, or transform into a directive
-[] Make the tiles directives
+# Screenshots
+
+![Homepage](http://i.imgur.com/YFBU8ER.png)
+![Definitons](http://i.imgur.com/qJMunm6.png)
+![Searching](http://i.imgur.com/wKdx0oD.png)
